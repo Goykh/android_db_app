@@ -1,0 +1,97 @@
+<StartupScreen>
+    GridLayout:
+        cols: 1
+        padding: 15, 15
+        spacing: 20, 20
+
+        Label:
+            text: "Potravinová banka"
+            font_size: '20'
+
+        Button:
+            text: "Přidat zápis"
+            on_press: root.to_insert_screen()
+            size_hint: .3, .5
+        Button:
+            text: "Vypsat data"
+            on_press: root.to_output_screen()
+            size_hint: .3, .5
+
+<InsertScreen>
+    GridLayout:
+        cols: 1
+        padding: 15, 15
+        spacing: 20, 20
+        Label:
+            text: "Potravinová banka"
+            font_size: '20'
+        TextInput:
+            id: org_name
+            hint_text: "Název organizace"
+        TextInput:
+            id: shop_name
+            hint_text: "Název obchodu"
+        TextInput:
+            id: type
+            hint_text: "Typ"
+        TextInput:
+            id: amount
+            hint_text: "Hmotnost v kg"
+        RelativeLayout:
+            Button:
+                text: "Potvrdit"
+                on_press: root.confirm()
+                size_hint: .3, .5
+                pos_hint: {'center_x': .5, 'center_y': .6}
+            Label:
+                id: org_wrong
+                text: ""
+
+<OutputScreen>
+    GridLayout:
+        cols: 1
+        padding: 15, 15
+        spacing: 20, 20
+        Label:
+            text: "Potravinová banka"
+            font_size: '20'
+        TextInput:
+            id: out_org_name
+            hint_text: "Název organizace"
+        TextInput:
+            id: out_shop_name
+            hint_text: "Název obchodu"
+        TextInput:
+            id: out_type
+            hint_text: "Typ"
+
+        Button:
+            text: "Potvrdit"
+            on_press: root.show_amount()
+            size_hint: .3, .5
+            pos_hint: {'center_x': .5, 'center_y': .6}
+        Label:
+            id: out_org
+            text: ""
+        Button:
+            text: "Návrat do menu."
+            on_press: root.return_to_menu()
+<SuccessScreen>
+    GridLayout:
+        cols:1
+        Label:
+            text: "Záznam úspěšně přidán!"
+        Button:
+            text: "Návrat do menu."
+            on_press: root.return_to_menu()
+
+
+<RootWidget>:
+    StartupScreen:
+        name: "startup_screen"
+    InsertScreen:
+        name: "insert_screen"
+    SuccessScreen:
+        name: "success_screen"
+    OutputScreen:
+        name: "output_screen"
