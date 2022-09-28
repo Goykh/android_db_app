@@ -1,5 +1,7 @@
 from kivy.app import App
 from kivy.lang import Builder
+from kivy.metrics import dp
+from kivy.uix.button import Button
 from kivy.uix.screenmanager import Screen, ScreenManager
 from shops import Organisation
 
@@ -15,14 +17,21 @@ class StartupScreen(Screen):
 
 
 class InsertScreen(Screen):
-    def confirm(self):
-        org = self.ids.org_name.text
-        shop = self.ids.shop_name.text
-        typ = self.ids.type.text
-        amount = self.ids.amount.text
-        organisation = Organisation(org)
-        organisation.insert(org, shop, typ, amount)
-        self.manager.current = "success_screen"
+    def on_enter(self, *args):
+        db = Organisation("dchp")
+        for i in db.org_list():
+            btn = Button(text=str(i), size_hint_y=None, height=50)
+            self.ids.box.add_widget(btn)
+
+
+    # def confirm(self):
+    #     org = self.ids.org_name.text
+    #     shop = self.ids.shop_name.text
+    #     typ = self.ids.type.text
+    #     amount = self.ids.amount.text
+    #     organisation = Organisation(org)
+    #     organisation.insert(org, shop, typ, amount)
+    #     self.manager.current = "success_screen"
 
     def show_amount(self):
         org = self.ids.org_name.text
