@@ -48,3 +48,10 @@ class Organisation:
             amount = self.cur.fetchone()
             self.conn.commit()
             return amount
+
+    def org_list(self):
+        self.cur.execute("SELECT name FROM sqlite_master where type='table';")
+        tup_names = self.cur.fetchall()
+        self.conn.commit()
+        names = [i for tup in tup_names for i in tup]
+        return names
