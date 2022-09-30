@@ -78,13 +78,14 @@ class OrgOutputScreen(Screen):
         output_org = obj.text
         self.manager.current = "text_output_screen"
 
-#THIS DOESN'T WORK YET !!!
+
+# THIS DOESN'T WORK YET !!!
 class TextOutputScreen(Screen):
-    def show_amount(self):
+    def on_enter(self):
         org = Organisation(output_org)
         amount = org.get_type_amount(output_org)
-        l = Label(text=f'[color=ff3333]{amount}[/color]', markup=True)
-        self.ids.box.add_widget(l)
+        self.ids.output.text = str(amount)
+
     def return_to_menu(self):
         self.manager.transition.direction = "left"
         self.manager.current = "startup_screen"

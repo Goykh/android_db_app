@@ -108,13 +108,9 @@
 <TextOutputScreen>:
     GridLayout:
         cols: 1
-        ScrollView:
-            GridLayout:
-                cols: 4
-                spacing: "10dp"
-                id: box
-                size_hint_y: None
-                height: self.minimum_height
+        Label:
+            text: ""
+            id: output
         Button:
             text: "Návrat do menu"
             on_press: root.return_to_menu()
