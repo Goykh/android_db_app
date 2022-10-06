@@ -53,20 +53,6 @@ class InsertShopScreen(Screen):
 
 
 class TypeAndAmountScreen(Screen):
-    # def on_enter(self, *args):
-    #     btn_a = Button(text="A - Sbírka potravin", ids='type_a', size_hint=(.5, .5), on_press=self.change_color)
-    #     btn_b = Button(text="B - Čerstvé potraviny", ids='type_b', size_hint=(.5, .5), on_press=self.change_color)
-    #     btn_c = Button(text="C - Trvanlivé potraviny a nápoje", ids='type_c', size_hint=(.5, .5),
-    #                    on_press=self.change_color)
-    #     btn_m = Button(text="M - Materialní a drogérie", ids='type_a', size_hint=(.5, .5), on_press=self.change_color)
-    #     btn_a.bind(on_press=lambda x: self.get_type('a'))
-    #     btn_b.bind(on_press=lambda x: self.get_type('b'))
-    #     btn_c.bind(on_press=lambda x: self.get_type('c'))
-    #     btn_m.bind(on_press=lambda x: self.get_type('m'))
-    #     self.ids.grid.add_widget(btn_a)
-    #     self.ids.grid.add_widget(btn_b)
-    #     self.ids.grid.add_widget(btn_c)
-    #     self.ids.grid.add_widget(btn_m)
 
     def get_type(self, input_type):
         global type
