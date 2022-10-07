@@ -22,10 +22,11 @@ class StartupScreen(Screen):
 
 
 class InsertOrgScreen(Screen):
-    def on_pre_enter(self, *args):
+    def on_enter(self, *args):
         db = Organisation('DCHP')
-
+        self.ids.box.clear_widgets()
         for i in db.org_list():
+
             btn = Button(text=str(i), size_hint_y=None, height=50, on_release=self.get_org_name)
             self.ids.box.add_widget(btn)
 
@@ -35,12 +36,11 @@ class InsertOrgScreen(Screen):
         org_name = obj.text
         self.manager.current = "insert_shop_screen"
 
-    # def on_leave(self, *args):
-    #     self.ids.grid.clear_widgets()
 
 
 class InsertShopScreen(Screen):
     def on_enter(self, *args):
+        self.ids.box.clear_widgets()
         for i in SHOP_LIST:
             btn = Button(text=str(i), size_hint_y=None, height=50, on_release=self.get_shop_name)
             self.ids.box.add_widget(btn)
