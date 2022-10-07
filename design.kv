@@ -93,25 +93,25 @@
                 text: "A - Sbírka potravin"
                 size_hint: .5, .5
                 on_press: root.get_type("a")
-
+                font_size: '13sp'
             Button:
                 id: type_b
                 text: "B - Čerstvé potraviny"
                 size_hint: .5, .5
                 on_press: root.get_type("b")
-
+                font_size: '13sp'
             Button:
                 id: type_c
                 text: "C - Trvanlivé potraviny a nápoje"
                 size_hint: .5, .5
                 on_press: root.get_type("c")
-
+                font_size: '13sp'
             Button:
                 id: type_m
                 text: "M - Materialní a drogérie"
                 size_hint: .5, .5
                 on_press: root.get_type("m")
-
+                font_size: '13sp'
         GridLayout:
             cols: 1
             spacing: "10dp"
@@ -121,6 +121,9 @@
                 id: amount
                 spacing: "10dp"
                 hint_text: "Hmotnost v kg"
+                input_filter: 'float'
+                multiline: False
+                write_tab: False
             Button:
                 id: confirm_button
                 on_press: root.confirm()

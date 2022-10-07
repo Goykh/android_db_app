@@ -9,8 +9,8 @@ from kivy.uix.screenmanager import Screen, ScreenManager
 from shops import Organisation
 
 Builder.load_file('design.kv')
-SHOP_LIST = ["ALBERT", "BILLA", "D-VÝROBCI", "KAUFLAND", "MAKRO", "PENNY", "TESCO", "DROBNÝ DÁRCE", "SBÍRKA POTRAVIN",
-             "PBC", "SBÍRKA MODLETICE", "NORMA", "JIP", "DM", "ROSSMANN", "LIDL", "COOP", "JINÉ"]
+SHOP_LIST = ["ALBERT", "BILLA", "D-VÝROBCI", "KAUFLAND", "MAKRO", "PENNY", "TESCO", "DROBNÝ\nDÁRCE", "SBÍRKA\nPOTRAVIN",
+             "PBC", "SBÍRKA\nMODLETICE", "NORMA", "JIP", "DM", "ROSSMANN", "LIDL", "COOP", "JINÉ"]
 
 
 class StartupScreen(Screen):
@@ -26,8 +26,8 @@ class InsertOrgScreen(Screen):
         db = Organisation('DCHP')
         self.ids.box.clear_widgets()
         for i in db.org_list():
-
-            btn = Button(text=str(i), size_hint_y=None, height=50, on_release=self.get_org_name)
+            btn = Button(text=str(i), size_hint_y=None, height=50, on_release=self.get_org_name, valign='center',
+                         halign='center', font_size='10sp')
             self.ids.box.add_widget(btn)
 
     def get_org_name(self, obj):
@@ -37,12 +37,12 @@ class InsertOrgScreen(Screen):
         self.manager.current = "insert_shop_screen"
 
 
-
 class InsertShopScreen(Screen):
     def on_enter(self, *args):
         self.ids.box.clear_widgets()
         for i in SHOP_LIST:
-            btn = Button(text=str(i), size_hint_y=None, height=50, on_release=self.get_shop_name)
+            btn = Button(text=str(i), size_hint_y=None, height=50, on_release=self.get_shop_name, valign='center',
+                         halign='center', font_size='11sp')
             self.ids.box.add_widget(btn)
 
     def get_shop_name(self, obj):
@@ -110,7 +110,8 @@ class OrgOutputScreen(Screen):
     def on_enter(self, *args):
         db = Organisation('DCHP')
         for i in db.org_list():
-            btn = Button(text=str(i), size_hint_y=None, height=50, on_release=self.get_org_name)
+            btn = Button(text=str(i), size_hint_y=None, height=50, on_release=self.get_org_name, valign='center',
+                         halign='center', font_size='10sp')
             self.ids.box.add_widget(btn)
 
     def get_org_name(self, obj):
@@ -120,7 +121,6 @@ class OrgOutputScreen(Screen):
         self.manager.current = "text_output_screen"
 
 
-# THIS DOESN'T WORK YET !!!
 class TextOutputScreen(Screen):
     def on_enter(self):
         org = Organisation(output_org)
