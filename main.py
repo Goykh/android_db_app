@@ -127,7 +127,6 @@ class TextOutputScreen(Screen):
         self.ids.grid.clear_widgets()
         org = Organisation(output_org)
         amount = org.get_type_amount(output_org)
-        # self.ids.content_text.text = str(amount)
         for i in amount:
             lb1 = Label(text=str(i[0]), color=(1, 1, 1, 1))
             lb2 = Label(text=str(i[1]), color=(1, 1, 1, 1))
