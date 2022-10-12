@@ -108,6 +108,7 @@ class TypeAndAmountScreen(Screen):
 
 class OrgOutputScreen(Screen):
     def on_enter(self, *args):
+        self.ids.box.clear_widgets()
         db = Organisation('DCHP')
         for i in db.org_list():
             btn = Button(text=str(i), size_hint_y=None, height=50, on_release=self.get_org_name, valign='center',
@@ -123,9 +124,17 @@ class OrgOutputScreen(Screen):
 
 class TextOutputScreen(Screen):
     def on_enter(self):
+        self.ids.grid.clear_widgets()
         org = Organisation(output_org)
         amount = org.get_type_amount(output_org)
-        self.ids.content_text.text = str(amount)
+        # self.ids.content_text.text = str(amount)
+        for i in amount:
+            lb1 = Label(text=str(i[0]), color=(1, 1, 1, 1))
+            lb2 = Label(text=str(i[1]), color=(1, 1, 1, 1))
+            lb3 = Label(text=str(i[2]), color=(1, 1, 1, 1))
+            self.ids.grid.add_widget(lb1)
+            self.ids.grid.add_widget(lb2)
+            self.ids.grid.add_widget(lb3)
 
     def return_to_menu(self):
         self.manager.transition.direction = "left"

@@ -153,30 +153,25 @@
 
 
 <TextOutputScreen>:
-    canvas.before:
-        Color:
-            rgba: 1, 1, 1, 1
-        Rectangle:
-            pos: self.pos
-            size: self.size
+#    canvas.before:
+#        Color:
+#            rgba: 1, 1, 1, 1
+#        Rectangle:
+#            pos: self.pos
+#            size: self.size
     BoxLayout:
         orientation: 'vertical'
 
         ScrollView:
-            id: scroll_view
-            on_effect_cls: 'ScrollEffect'
-            do_scroll_x: True
-            Label:
-                font_name: 'JetBrainsMono-Regular'
-                color: utils.get_color_from_hex('##050505')
-                id: content_text
-                size_hint_x: None
-                size_hint_y: None
-                height: self.texture_size[1]
-                width: self.texture_size[0]
-                line_height: 1
-                halign: "left"
-                valign: "middle"
+            GridLayout:
+                cols: 3
+                id: grid
+                Label:
+                    text: 'OBCHOD'
+                Label:
+                    text: 'TYP'
+                Label:
+                    text: 'HMOTNOST'
 
         Button:
             text: "Návrat do menu"

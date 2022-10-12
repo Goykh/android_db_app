@@ -1,5 +1,5 @@
 import sqlite3
-import pandas as pd
+
 
 class Organisation:
     def __init__(self, name):
@@ -20,10 +20,9 @@ class Organisation:
         self.conn.commit()
 
     def get_type_amount(self, org):
-        # self.cur.execute(f"SELECT obchod, typ, SUM(vaha) FROM {org} GROUP BY obchod, typ;")
-        # amount = self.cur.fetchall()
-        # self.conn.commit()
-        amount = pd.read_sql_query(f'SELECT obchod, typ, SUM(vaha) FROM {org} GROUP BY obchod, typ;', self.conn)
+        self.cur.execute(f"SELECT obchod, typ, SUM(vaha) FROM {org} GROUP BY obchod, typ;")
+        amount = self.cur.fetchall()
+        self.conn.commit()
         return amount
 
     def org_list(self):
