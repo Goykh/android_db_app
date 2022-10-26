@@ -10,12 +10,13 @@
         cols: 1
         padding: 15, 15
         spacing: 20, 20
-
-        Label:
-            text: "Potravinová banka"
-            color:
-            font_size: '20'
-            color: utils.get_color_from_hex('##050505')
+        Image:
+            source: 'pictures/pb_logo.jpg'
+#        Label:
+#            text: "Potravinová banka"
+#            color:
+#            font_size: '20'
+#            color: utils.get_color_from_hex('#050505')
 
         Button:
             text: "Přidat zápis"
@@ -43,7 +44,7 @@
             color: utils.get_color_from_hex('##050505')
         ScrollView:
             GridLayout:
-                cols: 4
+                cols: 2
                 spacing: "10dp"
                 id: box
                 size_hint_y: None
@@ -64,7 +65,7 @@
             color: utils.get_color_from_hex('##050505')
         ScrollView:
             GridLayout:
-                cols: 4
+                cols: 2
                 spacing: "10dp"
                 id: box
                 size_hint_y: None
@@ -145,7 +146,7 @@
             color: utils.get_color_from_hex('##050505')
         ScrollView:
             GridLayout:
-                cols: 4
+                cols: 2
                 spacing: "10dp"
                 id: box
                 size_hint_y: None
@@ -153,31 +154,66 @@
 
 
 <TextOutputScreen>:
-#    canvas.before:
-#        Color:
-#            rgba: 1, 1, 1, 1
-#        Rectangle:
-#            pos: self.pos
-#            size: self.size
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
     BoxLayout:
         orientation: 'vertical'
 
+
+        GridLayout:
+            cols: 3
+            size_hint: 1, .15
+            canvas.before:
+                Color:
+                    rgba: 210/255, 211/255, 214/255, .3
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            Label:
+
+                text: 'OBCHOD'
+                color: 0, 0, 0, 1
+                padding: (10, 0)
+            Label:
+                text: 'TYP'
+                color: 0, 0, 0, 1
+                padding: (10, 0)
+            Label:
+                text: 'HMOTNOST'
+                color: 0, 0, 0, 1
+                padding: (0, 0)
         ScrollView:
+            canvas.before:
+                Color:
+                    rgba: 1, 1, 1, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
             GridLayout:
                 cols: 3
-                id: grid
-                Label:
-                    text: 'OBCHOD'
-                Label:
-                    text: 'TYP'
-                Label:
-                    text: 'HMOTNOST'
+                id: output_grid
+                row_force_default: True
+                row_default_height: 20
+                spacing: (10, 10)
+                height: self.minimum_height
+                size_hint_y: None
 
-        Button:
-            text: "Návrat do menu"
-            on_press: root.return_to_menu()
+
+        GridLayout:
+            cols: 2
             size_hint_y: None
             height: '40dp'
+            Button:
+                text: "Zpátky"
+                on_press: root.return_to_previous_screen()
+            Button:
+                text: "Návrat do menu"
+                on_press: root.return_to_menu()
 
 
 <SuccessScreen>
@@ -189,8 +225,7 @@
             size: self.size
     GridLayout:
         cols:1
-        Label:
-            text: "Záznam úspěšně přidán!"
+        id: success_grid
         Button:
             text: "Návrat do menu."
             on_press: root.return_to_menu()

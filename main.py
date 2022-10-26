@@ -1,11 +1,12 @@
 from kivy.app import App
+from kivy.graphics import Line
 from kivy.lang import Builder
-from kivy.metrics import dp
 
 from kivy.uix.button import Button
 from kivy.uix.label import Label
-from kivy.uix.recycleview import RecycleView
+
 from kivy.uix.screenmanager import Screen, ScreenManager
+
 from shops import Organisation
 
 Builder.load_file('design.kv')
@@ -27,7 +28,7 @@ class InsertOrgScreen(Screen):
         self.ids.box.clear_widgets()
         for i in db.org_list():
             btn = Button(text=str(i), size_hint_y=None, height=50, on_release=self.get_org_name, valign='center',
-                         halign='center', font_size='10sp')
+                         halign='center', font_size='14')
             self.ids.box.add_widget(btn)
 
     def get_org_name(self, obj):
@@ -42,7 +43,7 @@ class InsertShopScreen(Screen):
         self.ids.box.clear_widgets()
         for i in SHOP_LIST:
             btn = Button(text=str(i), size_hint_y=None, height=50, on_release=self.get_shop_name, valign='center',
-                         halign='center', font_size='11sp')
+                         halign='center', font_size='14')
             self.ids.box.add_widget(btn)
 
     def get_shop_name(self, obj):
@@ -100,9 +101,10 @@ class TypeAndAmountScreen(Screen):
             self.ids.type_c.background_color = (1, 1, 1, 1)
 
     def confirm(self):
-        amount = self.ids.amount.text
+        global input_amount
+        input_amount = self.ids.amount.text
         organisation = Organisation(org_name)
-        organisation.insert(org_name, shop_name, type, amount)
+        organisation.insert(org_name, shop_name, type, input_amount)
         self.manager.current = "success_screen"
 
 
@@ -112,11 +114,10 @@ class OrgOutputScreen(Screen):
         db = Organisation('DCHP')
         for i in db.org_list():
             btn = Button(text=str(i), size_hint_y=None, height=50, on_release=self.get_org_name, valign='center',
-                         halign='center', font_size='10sp')
+                         halign='center', font_size='14')
             self.ids.box.add_widget(btn)
 
     def get_org_name(self, obj):
-        print(obj.text)
         global output_org
         output_org = obj.text
         self.manager.current = "text_output_screen"
@@ -124,27 +125,40 @@ class OrgOutputScreen(Screen):
 
 class TextOutputScreen(Screen):
     def on_enter(self):
-        self.ids.grid.clear_widgets()
+        self.ids.output_grid.clear_widgets()
         org = Organisation(output_org)
         amount = org.get_type_amount(output_org)
         for i in amount:
-            lb1 = Label(text=str(i[0]), color=(1, 1, 1, 1))
-            lb2 = Label(text=str(i[1]), color=(1, 1, 1, 1))
-            lb3 = Label(text=str(i[2]), color=(1, 1, 1, 1))
-            self.ids.grid.add_widget(lb1)
-            self.ids.grid.add_widget(lb2)
-            self.ids.grid.add_widget(lb3)
+            lb1 = Label(text=str(i[0]), color=(0, 0, 0, 1), markup=True, font_size='14')
+            lb2 = Label(text=str(i[1]), color=(0, 0, 0, 1), markup=True, font_size='14')
+            lb3 = Label(text=str(i[2]), color=(0, 0, 0, 1), markup=True, font_size='14')
+            self.ids.output_grid.add_widget(lb1)
+            self.ids.output_grid.add_widget(lb2)
+            self.ids.output_grid.add_widget(lb3)
+
+            # I WANT TO ADD A LINE IN BETWEEN THE ROWS, NEED TO FIGURE OUT HOW
+            # line = Line(points=[], cap='none', width=2)
+            # self.ids.output_grid.add_widget(line)
+
+    def return_to_previous_screen(self):
+        self.manager.transition.direction = "left"
+        self.manager.current = "org_output_screen"
 
     def return_to_menu(self):
         self.manager.transition.direction = "left"
         self.manager.current = "startup_screen"
-
 
 class RootWidget(ScreenManager):
     pass
 
 
 class SuccessScreen(Screen):
+    def on_enter(self, *args):
+        label = Label(
+            text=f'{org_name} - {shop_name} -  {type.upper()} - {input_amount}kg',
+            color=(0, 0, 0, 1))
+        self.ids.success_grid.add_widget(label)
+
     def return_to_menu(self):
         self.manager.transition.direction = "left"
         self.manager.current = "startup_screen"

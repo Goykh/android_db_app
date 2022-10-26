@@ -20,7 +20,7 @@ class Organisation:
         self.conn.commit()
 
     def get_type_amount(self, org):
-        self.cur.execute(f"SELECT obchod, typ, SUM(vaha) FROM {org} GROUP BY obchod, typ;")
+        self.cur.execute(f"SELECT obchod, typ, SUM(vaha), datum FROM {org} GROUP BY obchod, typ;")
         amount = self.cur.fetchall()
         self.conn.commit()
         return amount
