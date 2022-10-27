@@ -1,5 +1,5 @@
 import sqlite3
-
+from xlsxwriter.workbook import Workbook
 
 class Organisation:
     def __init__(self, name):
@@ -32,3 +32,17 @@ class Organisation:
         names = [i for tup in tup_names for i in tup]
         names.remove("sqlite_sequence")
         return names
+
+    # TODO: Method to delete records (probably delete all and you can do it manually every month)
+
+    # TODO: try to come up with a solution to export the db to a csv file
+    def to_csv_file(self, org):
+        workbook = Workbook(f'{org}.xlsx')
+        worksheet = workbook.add_worksheet()
+        data = self.cur.execute(f'SELECT obchod, typ, SUM(vaha) FROM {org} GROUP BY obchod, typ;')
+        for i, row in enumerate(data):
+            print(row)
+            worksheet.write(i, 0, row[0])
+            worksheet.write(i, 1, row[1])
+            worksheet.write(i, 2, row[2])
+        workbook.close()
