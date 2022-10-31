@@ -373,6 +373,31 @@ class TextOutputScreen(Screen):
         self.manager.transition.direction = "left"
         self.manager.current = "startup_screen"
 
+    def to_detailed_output(self):
+        self.manager.current = "detailed_output_screen"
+
+
+class DetailedOutputScreen(Screen):
+    def on_pre_enter(self):
+        """
+
+        """
+        # clears widgets on screen
+        self.ids.detailed_grid.clear_widgets()
+        org = Organisation(output_org)
+        data = org.get_all_table_data(output_org)
+        for i in data:
+            reversed_date = i[4][:10]  # YYYY-MM-DD format
+            date = f"{reversed_date[8:]}-{reversed_date[5:7]}-{reversed_date[:4]}"  # DD-MM-YYYY format
+            lb1 = Label(text=str(i[1]), color=(0, 0, 0, 1), markup=True, font_size='14')
+            lb2 = Label(text=str(i[2]), color=(0, 0, 0, 1), markup=True, font_size='14')
+            lb3 = Label(text=str(i[3]), color=(0, 0, 0, 1), markup=True, font_size='14')
+            lb4 = Label(text=str(date), color=(0, 0, 0, 1), markup=True, font_size='14')
+            self.ids.detailed_grid.add_widget(lb1)
+            self.ids.detailed_grid.add_widget(lb2)
+            self.ids.detailed_grid.add_widget(lb3)
+            self.ids.detailed_grid.add_widget(lb4)
+
 
 class RootWidget(ScreenManager):
     pass

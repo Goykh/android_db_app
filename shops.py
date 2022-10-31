@@ -45,6 +45,22 @@ class Organisation:
         self.conn.commit()
         return amount
 
+    def get_all_table_data(self, org):
+        """
+        Gets all entries in a table.
+        :param org: org name -> table name
+        """
+        self.cur.execute(f"SELECT * FROM {org};")
+        data = self.cur.fetchall()
+        self.conn.commit()
+        return data
+
+    # SNIPPET TO CONVERT DATETIME FROM SQL INTO ONLY DATE
+    # 4th index in touple
+    # date[:10] - gives date in YYYY-MM-DD
+    # date = f"{date[8:]}-{date[5:7]}-{date[:4]}" - reverse DD-MM-YYYY
+
+
     def org_list(self):
         """
         This method is used to create the buttons.
@@ -59,6 +75,15 @@ class Organisation:
         return names
 
     # TODO: Method to delete records (probably delete all and you can do it manually every month)
+    def delete_data_in_table(self, org):
+        """
+        For now, deletes all data from table.
+        In the future, maybe add an option
+        to delete from and until certain date.
+        :param org: org name -> table name
+        """
+        self.cur.execute(f"DELETE FROM {org};")
+        self.conn.commit()
 
     # TODO: try to come up with a solution to export the db to a csv file
     def to_csv_file(self, org):

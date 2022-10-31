@@ -219,92 +219,6 @@
             on_press: root.confirm()
 
 
-
-<OrgOutputScreen>
-    canvas.before:
-        Color:
-            rgba: 1, 1, 1, 1
-        Rectangle:
-            pos: self.pos
-            size: self.size
-    GridLayout:
-        cols:1
-        Label:
-            text: "Vyberte Organizaci"
-            size_hint: .5, .3
-            color: utils.get_color_from_hex('##050505')
-        ScrollView:
-            GridLayout:
-                cols: 2
-                spacing: "10dp"
-                id: box
-                size_hint_y: None
-                height: self.minimum_height
-
-
-<TextOutputScreen>:
-    canvas.before:
-        Color:
-            rgba: 1, 1, 1, 1
-        Rectangle:
-            pos: self.pos
-            size: self.size
-    BoxLayout:
-        orientation: 'vertical'
-
-
-        GridLayout:
-            cols: 3
-            size_hint: 1, .15
-            canvas.before:
-                Color:
-                    rgba: 210/255, 211/255, 214/255, .3
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
-            Label:
-
-                text: 'OBCHOD'
-                color: 0, 0, 0, 1
-                padding: (10, 0)
-            Label:
-                text: 'TYP'
-                color: 0, 0, 0, 1
-                padding: (10, 0)
-            Label:
-                text: 'HMOTNOST'
-                color: 0, 0, 0, 1
-                padding: (0, 0)
-        ScrollView:
-            canvas.before:
-                Color:
-                    rgba: 1, 1, 1, 1
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
-
-            GridLayout:
-                cols: 3
-                id: output_grid
-                row_force_default: True
-                row_default_height: 20
-                spacing: (10, 10)
-                height: self.minimum_height
-                size_hint_y: None
-
-
-        GridLayout:
-            cols: 2
-            size_hint_y: None
-            height: '40dp'
-            Button:
-                text: "Zpátky"
-                on_press: root.return_to_previous_screen()
-            Button:
-                text: "Návrat do menu"
-                on_press: root.return_to_menu()
-
-
 <SuccessScreen>
     canvas.before:
         Color:
@@ -354,7 +268,151 @@
             Button:
                 text: "Návrat do hlavního menu."
                 on_press: root.return_to_menu()
-<RootWidget>:
+
+
+<OrgOutputScreen>
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    GridLayout:
+        cols:1
+        Label:
+            text: "Vyberte Organizaci"
+            size_hint: .5, .3
+            color: utils.get_color_from_hex('##050505')
+        ScrollView:
+            GridLayout:
+                cols: 2
+                spacing: "10dp"
+                id: box
+                size_hint_y: None
+                height: self.minimum_height
+
+
+<TextOutputScreen>
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    BoxLayout:
+        orientation: 'vertical'
+
+        GridLayout:
+            cols: 3
+            size_hint: 1, .15
+            canvas.before:
+                Color:
+                    rgba: 210/255, 211/255, 214/255, .3
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            Label:
+
+                text: 'OBCHOD'
+                color: 0, 0, 0, 1
+                padding: (10, 0)
+            Label:
+                text: 'TYP'
+                color: 0, 0, 0, 1
+                padding: (10, 0)
+            Label:
+                text: 'HMOTNOST'
+                color: 0, 0, 0, 1
+                padding: (0, 0)
+        ScrollView:
+            canvas.before:
+                Color:
+                    rgba: 1, 1, 1, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            GridLayout:
+                cols: 3
+                id: output_grid
+                row_force_default: True
+                row_default_height: 20
+                spacing: (10, 10)
+                height: self.minimum_height
+                size_hint_y: None
+
+
+        GridLayout:
+            cols: 3
+            size_hint_y: None
+            height: '40dp'
+            Button:
+                text: "Zpátky"
+                on_press: root.return_to_previous_screen()
+            Button:
+                text: "Detailní výpis"
+                on_press: root.to_detailed_output()
+            Button:
+                text: "Návrat do menu"
+                on_press: root.return_to_menu()
+
+
+
+
+<DetailedOutputScreen>
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    BoxLayout:
+        orientation: 'vertical'
+
+        GridLayout:
+            cols: 4
+            size_hint: 1, .15
+            canvas.before:
+                Color:
+                    rgba: 210/255, 211/255, 214/255, .3
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            Label:
+
+                text: 'OBCHOD'
+                color: 0, 0, 0, 1
+                padding: (10, 0)
+            Label:
+                text: 'TYP'
+                color: 0, 0, 0, 1
+                padding: (10, 0)
+            Label:
+                text: 'HMOTNOST'
+                color: 0, 0, 0, 1
+                padding: (10, 0)
+            Label:
+                text: 'DATUM'
+                color: 0, 0, 0, 1
+                padding: (10, 0)
+        ScrollView:
+            canvas.before:
+                Color:
+                    rgba: 1, 1, 1, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            GridLayout:
+                cols: 4
+                id: detailed_grid
+                row_force_default: True
+                row_default_height: 20
+                spacing: (10, 10)
+                height: self.minimum_height
+                size_hint_y: None
+
+<RootWidget>
     StartupScreen:
         name: "startup_screen"
     InsertOrgScreen:
@@ -369,7 +427,8 @@
         name: "org_output_screen"
     TextOutputScreen:
         name: "text_output_screen"
-
+    DetailedOutputScreen:
+        name: "detailed_output_screen"
 
 
 
