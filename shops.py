@@ -8,6 +8,8 @@ class Organisation:
         Connects to the db, creates the table if it doesn't exist (it should).
         :param name: name of db table
         """
+        if ' ' in name:
+            name = name.replace(' ', '_')
         self.conn = sqlite3.connect("pd2.db")
         self.cur = self.conn.cursor()
         self.cur.execute(f"CREATE TABLE IF NOT EXISTS {name}"
@@ -28,6 +30,9 @@ class Organisation:
         :param type: type of the food (A, B, C, M)
         :param amount: amount of food
         """
+        if ' ' in org:
+            org = org.replace(' ', '_')
+
         self.cur.execute(
             f'INSERT INTO {org}(obchod, typ, vaha, datum) VALUES(?, ?, ?, datetime("now", "localtime"));',
             (shop, type.upper(), amount))
@@ -39,7 +44,8 @@ class Organisation:
         :param org: org name -> table name
         :return: the amount grouped by shop name and type
         """
-
+        if ' ' in org:
+            org = org.replace(' ', '_')
         self.cur.execute(f"SELECT obchod, typ, SUM(vaha), datum FROM {org} GROUP BY obchod, typ;")
         amount = self.cur.fetchall()
         self.conn.commit()
@@ -50,6 +56,8 @@ class Organisation:
         Gets all entries in a table.
         :param org: org name -> table name
         """
+        if ' ' in org:
+            org = org.replace(' ', '_')
         self.cur.execute(f"SELECT * FROM {org};")
         data = self.cur.fetchall()
         self.conn.commit()
@@ -70,8 +78,16 @@ class Organisation:
         self.cur.execute("SELECT name FROM sqlite_master where type='table';")
         tup_names = self.cur.fetchall()
         self.conn.commit()
-        names = [i for tup in tup_names for i in tup]
-        names.remove("sqlite_sequence")
+        names_raw = [i for tup in tup_names for i in tup]
+        names_raw.remove("sqlite_sequence")
+        names = []
+        for name in names_raw:
+            if '_' in name:
+                new_name = name.replace('_', ' ')
+                names.append(new_name)
+            else:
+                names.append(name)
+        names.sort()
         return names
 
     # TODO: Method to delete records (probably delete all and you can do it manually every month)
@@ -82,6 +98,8 @@ class Organisation:
         to delete from and until certain date.
         :param org: org name -> table name
         """
+        if ' ' in org:
+            org = org.replace(' ', '_')
         self.cur.execute(f"DELETE FROM {org};")
         self.conn.commit()
 
@@ -93,6 +111,8 @@ class Organisation:
         :param org: org name -> table name
         :return: csv file with the data
         """
+        if ' ' in org:
+            org = org.replace(' ', '_')
         workbook = Workbook(f'{org}.xlsx')
         worksheet = workbook.add_worksheet()
         data = self.cur.execute(f'SELECT obchod, typ, SUM(vaha) FROM {org} GROUP BY obchod, typ;')

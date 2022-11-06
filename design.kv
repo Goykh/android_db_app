@@ -39,6 +39,7 @@
             size_hint: .5, .3
             color: utils.get_color_from_hex('##050505')
         ScrollView:
+            id: scroll_org
             GridLayout:
                 cols: 2
                 spacing: "10dp"
@@ -60,6 +61,7 @@
             size_hint: .5, .3
             color: utils.get_color_from_hex('##050505')
         ScrollView:
+            id: scroll_shop
             GridLayout:
                 cols: 2
                 spacing: "10dp"
@@ -87,30 +89,34 @@
             cols: 2
             spacing: "10dp"
             size_hint: 1, .3
-            Button:
+            ToggleButton:
+                group: type
                 id: type_a
                 text: "A - Sbírka potravin"
                 size_hint: .5, .5
-                on_press: root.get_type("a")
                 font_size: '13sp'
-            Button:
+                on_press: root.get_type("a")
+            ToggleButton:
+                group: type
                 id: type_b
                 text: "B - Čerstvé potraviny"
                 size_hint: .5, .5
-                on_press: root.get_type("b")
                 font_size: '13sp'
-            Button:
+                on_press: root.get_type("b")
+            ToggleButton:
+                group: type
                 id: type_c
                 text: "C - Trvanlivé potraviny a nápoje"
                 size_hint: .5, .5
-                on_press: root.get_type("c")
                 font_size: '13sp'
-            Button:
+                on_press: root.get_type("c")
+            ToggleButton:
+                group: type
                 id: type_m
                 text: "M - Materialní a drogérie"
                 size_hint: .5, .5
-                on_press: root.get_type("m")
                 font_size: '13sp'
+                on_press: root.get_type("m")
 
         BoxLayout:
             orientation: "vertical"
@@ -284,6 +290,7 @@
             size_hint: .5, .3
             color: utils.get_color_from_hex('##050505')
         ScrollView:
+            id: scroll_out_org
             GridLayout:
                 cols: 2
                 spacing: "10dp"
@@ -412,6 +419,20 @@
                 height: self.minimum_height
                 size_hint_y: None
 
+        GridLayout:
+            cols: 3
+            size_hint_y: None
+            height: '40dp'
+            Button:
+                text: "Zpátky"
+                on_press: root.return_to_previous_screen()
+            Button:
+                text: "Vymazat všechny záznamy tyhle tabulky"
+                on_press: root.delete_data()
+            Button:
+                text: "Návrat do menu"
+                on_press: root.return_to_menu()
+
 <RootWidget>
     StartupScreen:
         name: "startup_screen"
@@ -429,6 +450,5 @@
         name: "text_output_screen"
     DetailedOutputScreen:
         name: "detailed_output_screen"
-
 
 

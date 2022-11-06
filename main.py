@@ -3,10 +3,13 @@ from kivy.app import App
 from kivy.lang import Builder
 
 from kivy.uix.button import Button
+from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 
 from kivy.uix.screenmanager import Screen, ScreenManager
+from kivy.uix.widget import Widget
 
 from shops import Organisation
 
@@ -17,8 +20,10 @@ SHOP_LIST = ["ALBERT", "BILLA", "D-VÝROBCI", "KAUFLAND", "MAKRO", "PENNY", "TES
 
 
 class StartupScreen(Screen):
-    # The fist screen you enter when you open the app
-    # it has two buttons, one to add data and the other one to read data
+    """
+    The fist screen you enter when you open the app,
+    it has two buttons, one to add data and the other one to read data.
+    """
     def to_insert_screen(self):
         self.manager.current = "insert_org_screen"
 
@@ -27,8 +32,10 @@ class StartupScreen(Screen):
 
 
 class InsertOrgScreen(Screen):
-    # Screen where you pick the organisation to add data
-    def on_enter(self, *args):
+    """
+    Screen where you pick the organisation to add data.
+    """
+    def on_pre_enter(self, *args):
         """
         Method to dynamically generate all the organisations as buttons.
         the on_enter() makes it generate when you enter the screen.
@@ -39,6 +46,8 @@ class InsertOrgScreen(Screen):
         # mainly when you re-enter the screen so the buttons don't generate again
         # on top of the old ones
         self.ids.box.clear_widgets()
+        # reset scrollview to the top
+        self.ids.scroll_org.scroll_y = 1
         for i in db.org_list():
             btn = Button(text=str(i), size_hint_y=None, height=50, on_release=self.get_org_name, valign='center',
                          halign='center', font_size='14')
@@ -55,13 +64,17 @@ class InsertOrgScreen(Screen):
 
 
 class InsertShopScreen(Screen):
-    # same screen as before but with shops
-    def on_enter(self, *args):
+    """
+    Same screen as before but with shops.
+    """
+    def on_pre_enter(self, *args):
         """
         Method to dynamically generate all the shops as buttons from the SHOP_LIST constant.
         the on_enter() makes it generate when you enter the screen.
         """
         self.ids.box.clear_widgets()
+        # reset scrollview to the top
+        self.ids.scroll_shop.scroll_y = 1
         for i in SHOP_LIST:
             btn = Button(text=str(i), size_hint_y=None, height=50, on_release=self.get_shop_name, valign='center',
                          halign='center', font_size='14')
@@ -78,17 +91,22 @@ class InsertShopScreen(Screen):
 
 
 class TypeAndAmountScreen(Screen):
-    # screen with 4 buttons to pick the food type
-    # and a calculator layout below it to add the amount
+    """
+    Screen with 4 buttons to pick the food type
+    and a calculator layout below it to add the amount.
+    """
     def on_pre_enter(self, *args):
-        # THIS SHOULD RESET THE COLOURS OF THE BUTTONS
-        # WHEN YOU RE-ENTER THE SCREEN
-        # BUT IT DOES NOT WORK YET
+        """
+        Clears the screen before entering it.
+        Resets anything that has been set before.
+        """
+        global food_type
+        food_type = ''
         self.ids.calculator_input.text = ''
-        self.ids.type_a.background_normal = 'atlas://data/images/defaulttheme/button'
-        self.ids.type_b.background_normal = 'atlas://data/images/defaulttheme/button'
-        self.ids.type_c.background_normal = 'atlas://data/images/defaulttheme/button'
-        self.ids.type_m.background_normal = 'atlas://data/images/defaulttheme/button'
+        self.ids.type_a.state = 'normal'
+        self.ids.type_b.state = 'normal'
+        self.ids.type_c.state = 'normal'
+        self.ids.type_m.state = 'normal'
 
     def get_type(self, input_type):
         """
@@ -97,54 +115,8 @@ class TypeAndAmountScreen(Screen):
         """
         global food_type
         food_type = input_type
-        self.change_color()
 
-    def change_color(self):
-        """
-        Changes the colour of the clicked button to green
-        and back to grey when you click a different button.
-        I know that this is ugly AF and I need to rewrite this.
-        """
-        # 3 120 32 rgb for clicked button
-        # this part looks like crap, but I haven't figured out how to do it better...
-        if food_type == 'a':
-            self.ids.type_a.background_normal = ''
-            self.ids.type_b.background_normal = 'atlas://data/images/defaulttheme/button'
-            self.ids.type_c.background_normal = 'atlas://data/images/defaulttheme/button'
-            self.ids.type_m.background_normal = 'atlas://data/images/defaulttheme/button'
-            self.ids.type_a.background_color = (3 / 255, 120 / 255, 32 / 255, 1)
-            self.ids.type_b.background_color = (1, 1, 1, 1)
-            self.ids.type_c.background_color = (1, 1, 1, 1)
-            self.ids.type_m.background_color = (1, 1, 1, 1)
-        elif food_type == 'b':
-            self.ids.type_b.background_normal = ''
-            self.ids.type_a.background_normal = 'atlas://data/images/defaulttheme/button'
-            self.ids.type_c.background_normal = 'atlas://data/images/defaulttheme/button'
-            self.ids.type_m.background_normal = 'atlas://data/images/defaulttheme/button'
-            self.ids.type_b.background_color = (3 / 255, 120 / 255, 32 / 255, 1)
-            self.ids.type_a.background_color = (1, 1, 1, 1)
-            self.ids.type_c.background_color = (1, 1, 1, 1)
-            self.ids.type_m.background_color = (1, 1, 1, 1)
-        elif food_type == 'c':
-            self.ids.type_c.background_normal = ''
-            self.ids.type_a.background_normal = 'atlas://data/images/defaulttheme/button'
-            self.ids.type_b.background_normal = 'atlas://data/images/defaulttheme/button'
-            self.ids.type_m.background_normal = 'atlas://data/images/defaulttheme/button'
-            self.ids.type_c.background_color = (3 / 255, 120 / 255, 32 / 255, 1)
-            self.ids.type_a.background_color = (1, 1, 1, 1)
-            self.ids.type_b.background_color = (1, 1, 1, 1)
-            self.ids.type_m.background_color = (1, 1, 1, 1)
-        elif food_type == 'm':
-            self.ids.type_m.background_normal = ''
-            self.ids.type_a.background_normal = 'atlas://data/images/defaulttheme/button'
-            self.ids.type_b.background_normal = 'atlas://data/images/defaulttheme/button'
-            self.ids.type_c.background_normal = 'atlas://data/images/defaulttheme/button'
-            self.ids.type_m.background_color = (3 / 255, 120 / 255, 32 / 255, 1)
-            self.ids.type_a.background_color = (1, 1, 1, 1)
-            self.ids.type_b.background_color = (1, 1, 1, 1)
-            self.ids.type_c.background_color = (1, 1, 1, 1)
-
-    # Calculator functions!
+    # Calculator functions!!!
     def clear(self):
         """
         Method for when you press the C button on the calculator.
@@ -258,18 +230,11 @@ class TypeAndAmountScreen(Screen):
 
 
 class SuccessScreen(Screen):
-    # TODO: 2 new buttons:
-    # 1. button: go back to edit the input on the screen before if input was wrong
-    # 2. button: go back to InsertShopScreen to pick another shop for the same org
-    # make the sql query (.insert()) on this button or the return_to_menu button
-    #
-    # organisation = Organisation(org_name)
-    # organisation.insert(org_name, shop_name, type, input_amount)
-
-    # Confirmation screen
-    # You get a list of transactions made in the session.
-    # Generates 3 buttons to edit, add again or go back menu.
-    def on_enter(self, *args):
+    """
+    You get a list of transactions made in the session.
+    Generates 3 buttons to edit, add again or go back menu.
+    """
+    def on_pre_enter(self, *args):
         """
         On enter generates a label with the data you just added.
         For now it stacks for every entry you did in the current session.
@@ -312,14 +277,18 @@ class SuccessScreen(Screen):
 
 
 class OrgOutputScreen(Screen):
-    # Screen to pick orgs to the output screen
-    # basically a copy of the InsertOrgScreen
-    def on_enter(self, *args):
+    """
+    Screen to pick orgs to the output screen.
+    Basically a copy of the InsertOrgScreen.
+    """
+    def on_pre_enter(self, *args):
         """
         Method to dynamically generate all the organisations as buttons.
         the on_enter() makes it generate when you enter the screen.
         """
         self.ids.box.clear_widgets()
+        # reset scrollview to the top
+        self.ids.scroll_out_org.scroll_y = 1
         db = Organisation('DCHP')
         for i in db.org_list():
             btn = Button(text=str(i), size_hint_y=None, height=50, on_release=self.get_org_name, valign='center',
@@ -337,7 +306,9 @@ class OrgOutputScreen(Screen):
 
 
 class TextOutputScreen(Screen):
-    # Screen that outputs the data for a org.
+    """
+    Screen that outputs the data for a org.
+    """
     def on_pre_enter(self):
         """
         On entering generates labels with the data from the .get_type_amount() method
@@ -350,7 +321,7 @@ class TextOutputScreen(Screen):
         for i in amount:
             lb1 = Label(text=str(i[0]), color=(0, 0, 0, 1), markup=True, font_size='14')
             lb2 = Label(text=str(i[1]), color=(0, 0, 0, 1), markup=True, font_size='14')
-            lb3 = Label(text=str(i[2]), color=(0, 0, 0, 1), markup=True, font_size='14')
+            lb3 = Label(text=f'{str(i[2])}', color=(0, 0, 0, 1), markup=True, font_size='14')
             self.ids.output_grid.add_widget(lb1)
             self.ids.output_grid.add_widget(lb2)
             self.ids.output_grid.add_widget(lb3)
@@ -378,6 +349,12 @@ class TextOutputScreen(Screen):
 
 
 class DetailedOutputScreen(Screen):
+    """
+    Shows detailed data.
+    Each row in the DB table, so basically every query done.
+    Has a method to delete all data in table.
+    Will add a method to delete only one row in the future.
+    """
     def on_pre_enter(self):
         """
 
@@ -391,12 +368,53 @@ class DetailedOutputScreen(Screen):
             date = f"{reversed_date[8:]}-{reversed_date[5:7]}-{reversed_date[:4]}"  # DD-MM-YYYY format
             lb1 = Label(text=str(i[1]), color=(0, 0, 0, 1), markup=True, font_size='14')
             lb2 = Label(text=str(i[2]), color=(0, 0, 0, 1), markup=True, font_size='14')
-            lb3 = Label(text=str(i[3]), color=(0, 0, 0, 1), markup=True, font_size='14')
+            lb3 = Label(text=str(f'{i[3]}kg'), color=(0, 0, 0, 1), markup=True, font_size='14')
             lb4 = Label(text=str(date), color=(0, 0, 0, 1), markup=True, font_size='14')
             self.ids.detailed_grid.add_widget(lb1)
             self.ids.detailed_grid.add_widget(lb2)
             self.ids.detailed_grid.add_widget(lb3)
             self.ids.detailed_grid.add_widget(lb4)
+
+    def return_to_previous_screen(self):
+        """
+        Return to previous screen to see first output screen
+        """
+        self.manager.transition.direction = "left"
+        self.manager.current = "text_output_screen"
+
+    def return_to_menu(self):
+        """
+        Returns to main screen
+        """
+        self.manager.transition.direction = "left"
+        self.manager.current = "startup_screen"
+
+    def delete_data(self):
+        grid = GridLayout(cols=2, size_hint=(1, .5))
+
+        confirm_button = Button(text='Ano!')
+        deny_button = Button(text='Ne!')
+
+        grid.add_widget(confirm_button)
+        grid.add_widget(deny_button)
+
+        popup = Popup(
+            title='Opravdu chcete vymazat celou tabulku?',
+            auto_dismiss=True,
+            size_hint=(.6, .3),
+            pos_hint={'x': .2, 'top': .7},
+            content=grid)
+
+        confirm_button.bind(on_press=self.delete_confirm)
+        confirm_button.bind(on_press=popup.dismiss)
+        deny_button.bind(on_press=popup.dismiss)
+        popup.open()
+
+    def delete_confirm(self, button):
+        org = Organisation(output_org)
+        org.delete_data_in_table(output_org)
+        self.manager.transition.direction = "left"
+        self.manager.current = "org_output_screen"
 
 
 class RootWidget(ScreenManager):
