@@ -20,14 +20,14 @@ class Organisation:
                          f"datum TEXT);")
         self.conn.commit()
 
-    def insert(self, org, shop, type, amount):
+    def insert(self, org, shop, food_type, amount):
         """
         Inserts data into a table.
         Input comes from the Kivy buttons.
         Also adds a date
         :param org: name of the org -> table name
         :param shop: name of the shop
-        :param type: type of the food (A, B, C, M)
+        :param food_type: type of the food (A, B, C, M)
         :param amount: amount of food
         """
         if ' ' in org:
@@ -35,7 +35,7 @@ class Organisation:
 
         self.cur.execute(
             f'INSERT INTO {org}(obchod, typ, vaha, datum) VALUES(?, ?, ?, datetime("now", "localtime"));',
-            (shop, type.upper(), amount))
+            (shop, food_type.upper(), amount))
         self.conn.commit()
 
     def get_type_amount(self, org):
@@ -64,10 +64,9 @@ class Organisation:
         return data
 
     # SNIPPET TO CONVERT DATETIME FROM SQL INTO ONLY DATE
-    # 4th index in touple
+    # 4th index in tuple
     # date[:10] - gives date in YYYY-MM-DD
     # date = f"{date[8:]}-{date[5:7]}-{date[:4]}" - reverse DD-MM-YYYY
-
 
     def org_list(self):
         """
@@ -104,7 +103,7 @@ class Organisation:
         self.conn.commit()
 
     # TODO: try to come up with a solution to export the db to a csv file
-    def to_csv_file(self, org):
+    def to_xlsx_file(self, org):
         """
         CURRENTLY NOT USED, BUT WILL BE IN THE FUTURE!
         Puts data from the SQL table into a csv file.

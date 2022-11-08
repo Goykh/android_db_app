@@ -3,20 +3,32 @@ from kivy.app import App
 from kivy.lang import Builder
 
 from kivy.uix.button import Button
-from kivy.uix.floatlayout import FloatLayout
+
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 
 from kivy.uix.screenmanager import Screen, ScreenManager
-from kivy.uix.widget import Widget
 
 from shops import Organisation
 
 Builder.load_file('design.kv')
+
 # List of shops to generate buttons
 SHOP_LIST = ["ALBERT", "BILLA", "D-VÝROBCI", "KAUFLAND", "MAKRO", "PENNY", "TESCO", "DROBNÝ\nDÁRCE", "SBÍRKA\nPOTRAVIN",
              "PBC", "SBÍRKA\nMODLETICE", "NORMA", "JIP", "DM", "ROSSMANN", "LIDL", "COOP", "JINÉ"]
+
+# Global variables
+# have to be used to used data from one screen
+# on a different screen
+
+# Input variables:
+org_name = ''
+shop_name = ''
+food_type = ''
+input_amount = ''
+# Output variable:
+output_org = ''
 
 
 class StartupScreen(Screen):
@@ -24,6 +36,7 @@ class StartupScreen(Screen):
     The fist screen you enter when you open the app,
     it has two buttons, one to add data and the other one to read data.
     """
+
     def to_insert_screen(self):
         self.manager.current = "insert_org_screen"
 
@@ -35,11 +48,13 @@ class InsertOrgScreen(Screen):
     """
     Screen where you pick the organisation to add data.
     """
+
     def on_pre_enter(self, *args):
         """
         Method to dynamically generate all the organisations as buttons.
         the on_enter() makes it generate when you enter the screen.
         """
+        self.manager.transition.direction = 'left'
         # calling the db, I picked one org as default, I should change this in the future
         db = Organisation('DCHP')
         # clearing the widgets
@@ -62,16 +77,22 @@ class InsertOrgScreen(Screen):
         org_name = obj.text
         self.manager.current = "insert_shop_screen"
 
+    def back_button(self):
+        self.manager.current = 'startup_screen'
+        self.manager.transition.direction = 'right'
+
 
 class InsertShopScreen(Screen):
     """
     Same screen as before but with shops.
     """
+
     def on_pre_enter(self, *args):
         """
         Method to dynamically generate all the shops as buttons from the SHOP_LIST constant.
         the on_enter() makes it generate when you enter the screen.
         """
+        self.manager.transition.direction = 'left'
         self.ids.box.clear_widgets()
         # reset scrollview to the top
         self.ids.scroll_shop.scroll_y = 1
@@ -89,17 +110,23 @@ class InsertShopScreen(Screen):
         shop_name = obj.text
         self.manager.current = "type_and_amount_screen"
 
+    def back_button(self):
+        self.manager.current = 'insert_org_screen'
+        self.manager.transition.direction = 'right'
+
 
 class TypeAndAmountScreen(Screen):
     """
     Screen with 4 buttons to pick the food type
     and a calculator layout below it to add the amount.
     """
+
     def on_pre_enter(self, *args):
         """
         Clears the screen before entering it.
         Resets anything that has been set before.
         """
+        self.manager.transition.direction = 'left'
         global food_type
         food_type = ''
         self.ids.calculator_input.text = ''
@@ -108,10 +135,11 @@ class TypeAndAmountScreen(Screen):
         self.ids.type_c.state = 'normal'
         self.ids.type_m.state = 'normal'
 
-    def get_type(self, input_type):
+    @staticmethod
+    def get_type(input_type):
         """
         Method to get the type of food as a global variable.
-        :param obj: text on the button you pressed
+        :param input_type: text on the button you pressed
         """
         global food_type
         food_type = input_type
@@ -228,18 +256,24 @@ class TypeAndAmountScreen(Screen):
                 content=Label(text='Nevybrali jste typ!!!'))
             popup.open()
 
+    def back_button(self):
+        self.manager.current = 'insert_shop_screen'
+        self.manager.transition.direction = 'right'
+
 
 class SuccessScreen(Screen):
     """
     You get a list of transactions made in the session.
     Generates 3 buttons to edit, add again or go back menu.
     """
+
     def on_pre_enter(self, *args):
         """
         On enter generates a label with the data you just added.
-        For now it stacks for every entry you did in the current session.
+        For now, it stacks for every entry you did in the current session.
         """
-        # declaring the self.label so I can access it in a function below
+        # declaring the self.label, so I can access it in a function below
+        self.manager.transition.direction = 'left'
         self.label = Label(
             text=f'{org_name} - {shop_name} -  {food_type.upper()} - {input_amount}kg',
             color=(0, 0, 0, 1))
@@ -251,19 +285,19 @@ class SuccessScreen(Screen):
         Also deletes the newest label.
         """
         self.ids.query_output.remove_widget(self.label)
-        self.manager.transition.direction = "left"
         self.manager.current = 'type_and_amount_screen'
+        self.manager.transition.direction = "right"
 
     def return_to_org_screen(self):
         """
         Returns to the screen where you pick a shop from the list
-        so you can add more data to one organisation.
+        so, you can add more data to one organisation.
         Also makes the SQL query to add all the data to the database.
         """
         organisation = Organisation(org_name)
         organisation.insert(org_name, shop_name, food_type, input_amount)
-        self.manager.transition.direction = "left"
         self.manager.current = "insert_shop_screen"
+        self.manager.transition.direction = "right"
 
     def return_to_menu(self):
         """
@@ -272,8 +306,8 @@ class SuccessScreen(Screen):
         """
         organisation = Organisation(org_name)
         organisation.insert(org_name, shop_name, food_type, input_amount)
-        self.manager.transition.direction = "left"
         self.manager.current = "startup_screen"
+        self.manager.transition.direction = "right"
 
 
 class OrgOutputScreen(Screen):
@@ -281,11 +315,13 @@ class OrgOutputScreen(Screen):
     Screen to pick orgs to the output screen.
     Basically a copy of the InsertOrgScreen.
     """
+
     def on_pre_enter(self, *args):
         """
         Method to dynamically generate all the organisations as buttons.
         the on_enter() makes it generate when you enter the screen.
         """
+        self.manager.transition.direction = 'left'
         self.ids.box.clear_widgets()
         # reset scrollview to the top
         self.ids.scroll_out_org.scroll_y = 1
@@ -304,17 +340,23 @@ class OrgOutputScreen(Screen):
         output_org = obj.text
         self.manager.current = "text_output_screen"
 
+    def back_button(self):
+        self.manager.current = 'startup_screen'
+        self.manager.transition.direction = 'right'
+
 
 class TextOutputScreen(Screen):
     """
-    Screen that outputs the data for a org.
+    Screen that outputs the data for an org.
     """
+
     def on_pre_enter(self):
         """
         On entering generates labels with the data from the .get_type_amount() method
         from shops.py
         """
         # clears widgets on screen
+        self.manager.transition.direction = 'left'
         self.ids.output_grid.clear_widgets()
         org = Organisation(output_org)
         amount = org.get_type_amount(output_org)
@@ -334,15 +376,19 @@ class TextOutputScreen(Screen):
         """
         Return to previous screen to see data from a different org
         """
-        self.manager.transition.direction = "left"
         self.manager.current = "org_output_screen"
+        self.manager.transition.direction = "right"
+
+    def extract_data_to_xlsx(self):
+        org = Organisation(output_org)
+        org.to_xlsx_file(output_org)
 
     def return_to_menu(self):
         """
         Returns to main screen
         """
-        self.manager.transition.direction = "left"
         self.manager.current = "startup_screen"
+        self.manager.transition.direction = "right"
 
     def to_detailed_output(self):
         self.manager.current = "detailed_output_screen"
@@ -355,11 +401,13 @@ class DetailedOutputScreen(Screen):
     Has a method to delete all data in table.
     Will add a method to delete only one row in the future.
     """
+
     def on_pre_enter(self):
         """
 
         """
         # clears widgets on screen
+        self.manager.transition.direction = 'left'
         self.ids.detailed_grid.clear_widgets()
         org = Organisation(output_org)
         data = org.get_all_table_data(output_org)
@@ -379,15 +427,15 @@ class DetailedOutputScreen(Screen):
         """
         Return to previous screen to see first output screen
         """
-        self.manager.transition.direction = "left"
         self.manager.current = "text_output_screen"
+        self.manager.transition.direction = "right"
 
     def return_to_menu(self):
         """
         Returns to main screen
         """
-        self.manager.transition.direction = "left"
         self.manager.current = "startup_screen"
+        self.manager.transition.direction = "right"
 
     def delete_data(self):
         grid = GridLayout(cols=2, size_hint=(1, .5))
@@ -413,8 +461,8 @@ class DetailedOutputScreen(Screen):
     def delete_confirm(self, button):
         org = Organisation(output_org)
         org.delete_data_in_table(output_org)
-        self.manager.transition.direction = "left"
         self.manager.current = "org_output_screen"
+        self.manager.transition.direction = "right"
 
 
 class RootWidget(ScreenManager):

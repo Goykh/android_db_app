@@ -1,7 +1,10 @@
 #: import utils kivy.utils
 #: import Factory kivy.factory.Factory
 <StartupScreen>
+    # First Screen
+    # Has two buttons to either add or read data
     canvas.before:
+    # this canvas sets the white background for the screens
         Color:
             rgba: 1, 1, 1, 1
         Rectangle:
@@ -13,7 +16,6 @@
         spacing: 20, 20
         Image:
             source: 'pictures/pb_logo.jpg'
-
         Button:
             text: "Přidat zápis"
             on_press: root.to_insert_screen()
@@ -24,6 +26,8 @@
             size_hint: .3, .5
 
 <InsertOrgScreen>
+    # Screen with dynamically generated buttons
+    # to pick the organisation
     canvas.before:
         Color:
             rgba: 1, 1, 1, 1
@@ -34,11 +38,32 @@
     GridLayout:
         cols:1
         id: grid
-        Label:
-            text: "Vyberte Organizaci"
-            size_hint: .5, .3
-            color: utils.get_color_from_hex('##050505')
+        spacing: "10dp"
+        BoxLayout:
+            orientation: 'horizontal'
+            padding: 15, 15
+            size_hint: 1, .15
+            Button:
+                id: img_btn
+                text: 'Zpět'
+                size_hint: .03, .67
+                background_color: 0, 0, 0, 0
+                on_press: root.back_button()
+                # Image for the button arrow back
+                Image:
+                    source: 'pictures/back_arrow.png'
+                    center_x: self.parent.center_x
+                    center_y: self.parent.center_y
+            Label:
+                text: "Vyberte Organizaci"
+                size_hint: .5, .3
+                color: utils.get_color_from_hex('##050505')
+                pos_hint: {'center_x': 1}
+            Label:
+                size_hint: .03, .67
         ScrollView:
+            # The scrollview with the dynamic buttons
+            # the buttons are generated inside the GridLayout
             id: scroll_org
             GridLayout:
                 cols: 2
@@ -48,6 +73,8 @@
                 height: self.minimum_height
 
 <InsertShopScreen>
+    # Screen with dynamically generated buttons
+    # to pick the shop
     canvas.before:
         Color:
             rgba: 1, 1, 1, 1
@@ -56,11 +83,30 @@
             size: self.size
     GridLayout:
         cols:1
-        Label:
-            text: "Vyberte Obchod"
-            size_hint: .5, .3
-            color: utils.get_color_from_hex('##050505')
+        spacing: "10dp"
+        BoxLayout:
+            orientation: 'horizontal'
+            padding: 15, 15
+            size_hint: 1, .15
+            Button:
+                text: 'Zpět'
+                size_hint: .03, .67
+                background_color: 0, 0, 0, 0
+                on_press: root.back_button()
+                Image:
+                    source: 'pictures/back_arrow.png'
+                    center_x: self.parent.center_x
+                    center_y: self.parent.center_y
+            Label:
+                text: "Vyberte Organizaci"
+                size_hint: .5, .3
+                color: utils.get_color_from_hex('##050505')
+                pos_hint: {'center_x': 1}
+            Label:
+                size_hint: .03, .67
         ScrollView:
+            # The scrollview with the dynamic buttons
+            # the buttons are generated inside the GridLayout
             id: scroll_shop
             GridLayout:
                 cols: 2
@@ -70,21 +116,39 @@
                 height: self.minimum_height
 
 <TypeAndAmountScreen>
+    # Screen with 4 toggle buttons to pick the type
+    # and a basic calculator to pick and add up the amount
     canvas.before:
         Color:
             rgba: 1, 1, 1, 1
         Rectangle:
             pos: self.pos
             size: self.size
-
     GridLayout:
         cols: 1
         spacing: "10dp"
-        Label:
-            text: "Vyberte typ:"
-            size_hint: 1, .3
-            color: utils.get_color_from_hex('##050505')
+        BoxLayout:
+            orientation: 'horizontal'
+            padding: 15, 15
+            size_hint: 1, .15
+            Button:
+                text: 'Zpět'
+                size_hint: .03, .67
+                background_color: 0, 0, 0, 0
+                on_press: root.back_button()
+                Image:
+                    source: 'pictures/back_arrow.png'
+                    center_x: self.parent.center_x
+                    center_y: self.parent.center_y
+            Label:
+                text: "Vyberte Organizaci"
+                size_hint: .5, .3
+                color: utils.get_color_from_hex('##050505')
+                pos_hint: {'center_x': 1}
+            Label:
+                size_hint: .03, .67
         GridLayout:
+            # The ToggleButtons are placed here
             id: grid
             cols: 2
             spacing: "10dp"
@@ -92,36 +156,43 @@
             ToggleButton:
                 group: type
                 id: type_a
-                text: "A - Sbírka potravin"
+                text: "A\nSbírka potravin"
+                halign: 'center'
                 size_hint: .5, .5
                 font_size: '13sp'
                 on_press: root.get_type("a")
+                background_color: {'normal': utils.get_color_from_hex('#585858'), 'down': utils.get_color_from_hex('#077920')} [self.state]
             ToggleButton:
                 group: type
                 id: type_b
-                text: "B - Čerstvé potraviny"
+                text: "B\nČerstvé potraviny"
+                halign: 'center'
                 size_hint: .5, .5
                 font_size: '13sp'
                 on_press: root.get_type("b")
+                background_color: {'normal': utils.get_color_from_hex('#585858'), 'down': utils.get_color_from_hex('#077920')} [self.state]
             ToggleButton:
                 group: type
                 id: type_c
-                text: "C - Trvanlivé potraviny a nápoje"
+                text: "C\nTrvanlivé potraviny a nápoje"
+                halign: 'center'
                 size_hint: .5, .5
                 font_size: '13sp'
                 on_press: root.get_type("c")
+                background_color: {'normal': utils.get_color_from_hex('#585858'), 'down': utils.get_color_from_hex('#077920')} [self.state]
             ToggleButton:
                 group: type
                 id: type_m
-                text: "M - Materialní a drogérie"
+                text: "M\nMaterialní a drogérie"
+                halign: 'center'
                 size_hint: .5, .5
                 font_size: '13sp'
                 on_press: root.get_type("m")
-
+                background_color: {'normal': utils.get_color_from_hex('#585858'), 'down': utils.get_color_from_hex('#077920')} [self.state]
         BoxLayout:
+            # The calculator part
             orientation: "vertical"
             size: root.width, root.height
-
             TextInput:
                 hint_text: "Hmotnost v kg"
                 id: calculator_input
@@ -217,7 +288,6 @@
                     font_size: 16
                     text: '*'
                     on_press: root.math_operation('*')
-
         Button:
             text: "Potvrdit"
             size_hint: 1, .15
@@ -226,6 +296,11 @@
 
 
 <SuccessScreen>
+    # Confirmation screen with listed data added in current session
+    # and options to go back or continue.
+    # The SQL queries are confirmed with either back to menu
+    # or back to pick org screen buttons.
+    # Return to calculator lets you fix it
     canvas.before:
         Color:
             rgba: 1, 1, 1, 1
@@ -247,6 +322,8 @@
                 text: 'Dnes přidané záznamy'
                 color: 0, 0, 0, 1
         ScrollView:
+            # The queries from current session are
+            # in the GridLayout below
             canvas.before:
                 Color:
                     rgba: 1, 1, 1, 1
@@ -266,17 +343,22 @@
             cols: 3
             size_hint: 1, .20
             Button:
-                text: "Opravit zadání"
+                text: "Opravit\nzadání"
+                halign: 'center'
                 on_press: root.return_to_calculator()
             Button:
-                text: "Návrat do výběru obchodů."
+                text: "Návrat\ndo výběru\nobchodů."
+                halign: 'center'
                 on_press: root.return_to_org_screen()
             Button:
-                text: "Návrat do hlavního menu."
+                text: "Návrat\ndo hlavního\nmenu."
+                halign: 'center'
                 on_press: root.return_to_menu()
 
 
 <OrgOutputScreen>
+    # Screen with dynamically generated buttons
+    # to pick the organisation
     canvas.before:
         Color:
             rgba: 1, 1, 1, 1
@@ -285,11 +367,28 @@
             size: self.size
     GridLayout:
         cols:1
-        Label:
-            text: "Vyberte Organizaci"
-            size_hint: .5, .3
-            color: utils.get_color_from_hex('##050505')
+        BoxLayout:
+            orientation: 'horizontal'
+            padding: 15, 15
+            size_hint: 1, .15
+            Button:
+                text: 'Zpět'
+                size_hint: .03, .67
+                background_color: 0, 0, 0, 0
+                on_press: root.back_button()
+                Image:
+                    source: 'pictures/back_arrow.png'
+                    center_x: self.parent.center_x
+                    center_y: self.parent.center_y
+            Label:
+                text: "Vyberte Organizaci"
+                size_hint: .5, .3
+                color: utils.get_color_from_hex('##050505')
+                pos_hint: {'center_x': 1}
+            Label:
+                size_hint: .03, .67
         ScrollView:
+            # Buttons generated in GridLayout below
             id: scroll_out_org
             GridLayout:
                 cols: 2
@@ -300,6 +399,7 @@
 
 
 <TextOutputScreen>
+    # The output of picked organisation
     canvas.before:
         Color:
             rgba: 1, 1, 1, 1
@@ -308,7 +408,6 @@
             size: self.size
     BoxLayout:
         orientation: 'vertical'
-
         GridLayout:
             cols: 3
             size_hint: 1, .15
@@ -332,13 +431,13 @@
                 color: 0, 0, 0, 1
                 padding: (0, 0)
         ScrollView:
+            # The output is shown in the GridLayout
             canvas.before:
                 Color:
                     rgba: 1, 1, 1, 1
                 Rectangle:
                     pos: self.pos
                     size: self.size
-
             GridLayout:
                 cols: 3
                 id: output_grid
@@ -347,26 +446,33 @@
                 spacing: (10, 10)
                 height: self.minimum_height
                 size_hint_y: None
-
-
         GridLayout:
-            cols: 3
+            cols: 4
             size_hint_y: None
             height: '40dp'
             Button:
-                text: "Zpátky"
+                text: "Zpět"
+                halign: 'center'
                 on_press: root.return_to_previous_screen()
             Button:
-                text: "Detailní výpis"
+                text: "Detailní\nvýpis"
+                halign: 'center'
                 on_press: root.to_detailed_output()
             Button:
-                text: "Návrat do menu"
+                text: 'Exportovat\ndata'
+                halign: 'center'
+                on_press: root.extract_data_to_xlsx()
+            Button:
+                text: "Návrat\ndo menu"
+                halign: 'center'
                 on_press: root.return_to_menu()
 
 
 
 
+
 <DetailedOutputScreen>
+    # Detailed output with every row from the DB table
     canvas.before:
         Color:
             rgba: 1, 1, 1, 1
@@ -375,7 +481,6 @@
             size: self.size
     BoxLayout:
         orientation: 'vertical'
-
         GridLayout:
             cols: 4
             size_hint: 1, .15
@@ -386,7 +491,6 @@
                     pos: self.pos
                     size: self.size
             Label:
-
                 text: 'OBCHOD'
                 color: 0, 0, 0, 1
                 padding: (10, 0)
@@ -403,13 +507,13 @@
                 color: 0, 0, 0, 1
                 padding: (10, 0)
         ScrollView:
+            # Data is shown in the GridLayout
             canvas.before:
                 Color:
                     rgba: 1, 1, 1, 1
                 Rectangle:
                     pos: self.pos
                     size: self.size
-
             GridLayout:
                 cols: 4
                 id: detailed_grid
@@ -418,22 +522,32 @@
                 spacing: (10, 10)
                 height: self.minimum_height
                 size_hint_y: None
-
         GridLayout:
             cols: 3
             size_hint_y: None
             height: '40dp'
             Button:
-                text: "Zpátky"
+                text: "Zpět"
+                halign: 'center'
                 on_press: root.return_to_previous_screen()
             Button:
-                text: "Vymazat všechny záznamy tyhle tabulky"
+                text: "Vymazat\ntabulku"
+                halign: 'center'
                 on_press: root.delete_data()
             Button:
-                text: "Návrat do menu"
+                text: "Návrat\ndo menu"
+                halign: 'center'
                 on_press: root.return_to_menu()
 
 <RootWidget>
+    # The screen manager with all the screens
+    canvas.before:
+        # This sets the transition color as white
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            size: self.size
+            pos: self.pos
     StartupScreen:
         name: "startup_screen"
     InsertOrgScreen:
