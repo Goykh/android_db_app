@@ -1,6 +1,7 @@
 from kivy.app import App
 
 from kivy.lang import Builder
+from kivy.metrics import sp, dp
 
 from kivy.uix.button import Button
 
@@ -64,8 +65,8 @@ class InsertOrgScreen(Screen):
         # reset scrollview to the top
         self.ids.scroll_org.scroll_y = 1
         for i in db.org_list():
-            btn = Button(text=str(i), size_hint_y=None, height=50, on_release=self.get_org_name, valign='center',
-                         halign='center', font_size='14')
+            btn = Button(text=str(i), size_hint_y=None, height=dp(50), on_release=self.get_org_name, valign='center',
+                         halign='center', font_size=sp(14))
             self.ids.box.add_widget(btn)
 
     def get_org_name(self, obj):
@@ -97,8 +98,8 @@ class InsertShopScreen(Screen):
         # reset scrollview to the top
         self.ids.scroll_shop.scroll_y = 1
         for i in SHOP_LIST:
-            btn = Button(text=str(i), size_hint_y=None, height=50, on_release=self.get_shop_name, valign='center',
-                         halign='center', font_size='14')
+            btn = Button(text=str(i), size_hint_y=None, height=dp(50), on_release=self.get_shop_name, valign='center',
+                         halign='center', font_size=sp(14))
             self.ids.box.add_widget(btn)
 
     def get_shop_name(self, obj):
@@ -276,7 +277,7 @@ class SuccessScreen(Screen):
         self.manager.transition.direction = 'left'
         self.label = Label(
             text=f'{org_name} - {shop_name} -  {food_type.upper()} - {input_amount}kg',
-            color=(0, 0, 0, 1))
+            color=(0, 0, 0, 1), font_size=sp(20))
         self.ids.query_output.add_widget(self.label)
 
     def return_to_calculator(self):
@@ -327,8 +328,8 @@ class OrgOutputScreen(Screen):
         self.ids.scroll_out_org.scroll_y = 1
         db = Organisation('DCHP')
         for i in db.org_list():
-            btn = Button(text=str(i), size_hint_y=None, height=50, on_release=self.get_org_name, valign='center',
-                         halign='center', font_size='14')
+            btn = Button(text=str(i), size_hint_y=None, height=dp(50), on_release=self.get_org_name, valign='center',
+                         halign='center', font_size=sp(14))
             self.ids.box.add_widget(btn)
 
     def get_org_name(self, obj):
@@ -361,9 +362,9 @@ class TextOutputScreen(Screen):
         org = Organisation(output_org)
         amount = org.get_type_amount(output_org)
         for i in amount:
-            lb1 = Label(text=str(i[0]), color=(0, 0, 0, 1), markup=True, font_size='14')
-            lb2 = Label(text=str(i[1]), color=(0, 0, 0, 1), markup=True, font_size='14')
-            lb3 = Label(text=f'{str(i[2])}', color=(0, 0, 0, 1), markup=True, font_size='14')
+            lb1 = Label(text=str(i[0]), color=(0, 0, 0, 1), markup=True, font_size=sp(15))
+            lb2 = Label(text=str(i[1]), color=(0, 0, 0, 1), markup=True, font_size=sp(15))
+            lb3 = Label(text=f'{str(i[2])}', color=(0, 0, 0, 1), markup=True, font_size=sp(15))
             self.ids.output_grid.add_widget(lb1)
             self.ids.output_grid.add_widget(lb2)
             self.ids.output_grid.add_widget(lb3)
@@ -414,10 +415,10 @@ class DetailedOutputScreen(Screen):
         for i in data:
             reversed_date = i[4][:10]  # YYYY-MM-DD format
             date = f"{reversed_date[8:]}-{reversed_date[5:7]}-{reversed_date[:4]}"  # DD-MM-YYYY format
-            lb1 = Label(text=str(i[1]), color=(0, 0, 0, 1), markup=True, font_size='14')
-            lb2 = Label(text=str(i[2]), color=(0, 0, 0, 1), markup=True, font_size='14')
-            lb3 = Label(text=str(f'{i[3]}kg'), color=(0, 0, 0, 1), markup=True, font_size='14')
-            lb4 = Label(text=str(date), color=(0, 0, 0, 1), markup=True, font_size='14')
+            lb1 = Label(text=str(i[1]), color=(0, 0, 0, 1), markup=True, font_size=sp(15))
+            lb2 = Label(text=str(i[2]), color=(0, 0, 0, 1), markup=True, font_size=sp(15))
+            lb3 = Label(text=str(f'{i[3]}kg'), color=(0, 0, 0, 1), markup=True, font_size=sp(15))
+            lb4 = Label(text=str(date), color=(0, 0, 0, 1), markup=True, font_size=sp(15))
             self.ids.detailed_grid.add_widget(lb1)
             self.ids.detailed_grid.add_widget(lb2)
             self.ids.detailed_grid.add_widget(lb3)
