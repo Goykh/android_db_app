@@ -130,7 +130,6 @@ class TypeAndAmountScreen(Screen):
         self.manager.transition.direction = 'left'
         global food_type
         food_type = ''
-
         self.ids.type_a.state = 'normal'
         self.ids.type_b.state = 'normal'
         self.ids.type_c.state = 'normal'
@@ -146,12 +145,12 @@ class TypeAndAmountScreen(Screen):
         food_type = input_type
 
     # Calculator functions!!!
-    def clear(self):
+    def delete_last_number(self):
         """
-        Method for when you press the C button on the calculator.
-        Clears the text input area and shows the hint_text.
+        Method for when you press the << button on the calculator.
+        Deletes the last character in the input box.
         """
-        self.ids.calculator_input.text = ''
+        self.ids.calculator_input.text = self.ids.calculator_input.text[:-1]
 
     # method to press buttons
     def button_press(self, pressed_button):

@@ -227,8 +227,8 @@
                     id: clear
                     size_hint: (.2, .2)
                     font_size: '20sp'
-                    text: 'C'
-                    on_press: root.clear()
+                    text: u'\u00AB' # unicode <<
+                    on_press: root.delete_last_number()
                 Button:
                     size_hint: (.2, .2)
                     font_size: '20sp'
