@@ -1,14 +1,10 @@
 from kivy.app import App
-
 from kivy.lang import Builder
 from kivy.metrics import sp, dp
-
 from kivy.uix.button import Button
-
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
-
 from kivy.uix.screenmanager import Screen, ScreenManager
 
 from shops import Organisation
@@ -109,6 +105,10 @@ class InsertShopScreen(Screen):
         """
         global shop_name
         shop_name = obj.text
+        # Setting the text input on the calculator on the next screen here
+        # so when you come back to repair it from the screen after that
+        # the number will stay
+        self.manager.get_screen('type_and_amount_screen').ids.calculator_input.text = ''
         self.manager.current = "type_and_amount_screen"
 
     def back_button(self):
@@ -130,7 +130,7 @@ class TypeAndAmountScreen(Screen):
         self.manager.transition.direction = 'left'
         global food_type
         food_type = ''
-        self.ids.calculator_input.text = ''
+
         self.ids.type_a.state = 'normal'
         self.ids.type_b.state = 'normal'
         self.ids.type_c.state = 'normal'
