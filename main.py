@@ -208,10 +208,12 @@ class TypeAndAmountScreen(Screen):
         """
         previous_number = self.ids.calculator_input.text
         if previous_number.endswith('+') or previous_number.endswith('-') or previous_number.endswith('*'):
-            evaluation = eval(previous_number[:-1])
-        else:
+            previous_number = self.ids.calculator_input.text[:-1]
+        try:
             evaluation = eval(previous_number)
-        self.ids.calculator_input.text = str(evaluation)
+            self.ids.calculator_input.text = str(evaluation)
+        except Exception:
+            self.ids.calculator_input.text = "Chyba, zadali jste neplatný znak!"
 
     def confirm(self):
         # this is not done yet

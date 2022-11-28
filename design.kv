@@ -201,9 +201,9 @@
                 halign: "right"
                 font_size: '16sp'
                 size_hint:(1, .15)
-
+                padding: "15dp", "12dp"
+                readonly: True
                 multiline: False
-                write_tab: False
             GridLayout:
                 cols: 4
                 rows: 4
@@ -427,11 +427,11 @@
 
                 text: 'OBCHOD'
                 color: 0, 0, 0, 1
-                padding: (10, 0)
+                padding: "10dp", "10dp"
             Label:
                 text: 'TYP'
                 color: 0, 0, 0, 1
-                padding: (10, 0)
+                padding: "10dp", "10dp"
             Label:
                 text: 'HMOTNOST'
                 color: 0, 0, 0, 1
@@ -448,8 +448,8 @@
                 cols: 3
                 id: output_grid
                 row_force_default: True
-                row_default_height: 20
-                spacing: (10, 10)
+                row_default_height: "20dp"
+                spacing: "10dp", "10dp"
                 height: self.minimum_height
                 size_hint_y: None
         GridLayout:
@@ -499,19 +499,19 @@
             Label:
                 text: 'OBCHOD'
                 color: 0, 0, 0, 1
-                padding: (10, 0)
+                padding: "10dp", "10dp"
             Label:
                 text: 'TYP'
                 color: 0, 0, 0, 1
-                padding: (10, 0)
+                padding: "10dp", "10dp"
             Label:
                 text: 'HMOTNOST'
                 color: 0, 0, 0, 1
-                padding: (10, 0)
+                padding: "10dp", "10dp"
             Label:
                 text: 'DATUM'
                 color: 0, 0, 0, 1
-                padding: (10, 0)
+                padding: "10dp", "10dp"
         ScrollView:
             # Data is shown in the GridLayout
             canvas.before:
@@ -524,8 +524,8 @@
                 cols: 4
                 id: detailed_grid
                 row_force_default: True
-                row_default_height: 20
-                spacing: (10, 10)
+                row_default_height: "20dp"
+                spacing: "10dp", "10dp"
                 height: self.minimum_height
                 size_hint_y: None
         GridLayout:
@@ -570,5 +570,3 @@
         name: "text_output_screen"
     DetailedOutputScreen:
         name: "detailed_output_screen"
-
-
