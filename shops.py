@@ -1,5 +1,12 @@
 import sqlite3
+
+from kivy.utils import platform
 from xlsxwriter.workbook import Workbook
+
+if platform == "android":
+    from android.permissions import request_permissions, Permission
+
+    request_permissions([Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE])
 
 
 class Organisation:
@@ -89,7 +96,6 @@ class Organisation:
         names.sort()
         return names
 
-    # TODO: Method to delete records (probably delete all and you can do it manually every month)
     def delete_data_in_table(self, org):
         """
         For now, deletes all data from table.
@@ -102,7 +108,6 @@ class Organisation:
         self.cur.execute(f"DELETE FROM {org};")
         self.conn.commit()
 
-    # TODO: try to come up with a solution to export the db to a csv file
     def to_xlsx_file(self, org):
         """
         CURRENTLY NOT USED, BUT WILL BE IN THE FUTURE!

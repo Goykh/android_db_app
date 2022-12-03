@@ -6,7 +6,6 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import Screen, ScreenManager
-
 from shops import Organisation
 
 Builder.load_file('design.kv')
