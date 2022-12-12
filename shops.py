@@ -1,12 +1,7 @@
 import sqlite3
 
-from kivy.utils import platform
 from xlsxwriter.workbook import Workbook
 
-if platform == "android":
-    from android.permissions import request_permissions, Permission
-
-    request_permissions([Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE])
 
 
 class Organisation:
@@ -108,7 +103,7 @@ class Organisation:
         self.cur.execute(f"DELETE FROM {org};")
         self.conn.commit()
 
-    def to_xlsx_file(self, org):
+    def to_xlsx_file(self, org, path):
         """
         CURRENTLY NOT USED, BUT WILL BE IN THE FUTURE!
         Puts data from the SQL table into a csv file.
@@ -117,11 +112,10 @@ class Organisation:
         """
         if ' ' in org:
             org = org.replace(' ', '_')
-        workbook = Workbook(f'{org}.xlsx')
+        workbook = Workbook(f'{path}/{org}.xlsx')
         worksheet = workbook.add_worksheet()
         data = self.cur.execute(f'SELECT obchod, typ, SUM(vaha) FROM {org} GROUP BY obchod, typ;')
         for i, row in enumerate(data):
-            print(row)
             worksheet.write(i, 0, row[0])
             worksheet.write(i, 1, row[1])
             worksheet.write(i, 2, row[2])

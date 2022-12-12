@@ -6,6 +6,8 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import Screen, ScreenManager
+from kivy.utils import platform
+
 from shops import Organisation
 
 Builder.load_file('design.kv')
@@ -381,8 +383,11 @@ class TextOutputScreen(Screen):
         self.manager.transition.direction = "right"
 
     def extract_data_to_xlsx(self):
-        org = Organisation(output_org)
-        org.to_xlsx_file(output_org)
+        if platform == "android":
+            from android.storage import app_storage_path
+            file_path = app_storage_path()
+            org = Organisation(output_org)
+            org.to_xlsx_file(output_org, file_path)
 
     def return_to_menu(self):
         """
