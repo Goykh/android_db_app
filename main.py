@@ -1,3 +1,5 @@
+import os.path
+
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.metrics import sp, dp
@@ -7,14 +9,13 @@ from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import Screen, ScreenManager
 from kivy.utils import platform
-
 from shops import Organisation
 
 Builder.load_file('design.kv')
 
 # List of shops to generate buttons
-SHOP_LIST = ["ALBERT", "BILLA", "D-VÝROBCI", "KAUFLAND", "MAKRO", "PENNY", "TESCO", "DROBNÝ\nDÁRCE", "SBÍRKA\nPOTRAVIN",
-             "PBC", "SBÍRKA\nMODLETICE", "NORMA", "JIP", "DM", "ROSSMANN", "LIDL", "COOP", "JINÉ"]
+SHOP_LIST = ["ALBERT", "BILLA", "D-VÝROBCI", "KAUFLAND", "MAKRO", "PENNY", "TESCO", "DD", "SP",
+             "PBC", "SP MODLETICE", "NORMA", "JIP", "DM", "ROSSMANN", "LIDL", "COOP", "PB OSTATNÍ", "JINÉ"]
 
 # Global variables
 # have to be used to used data from one screen
@@ -281,7 +282,8 @@ class SuccessScreen(Screen):
         self.manager.transition.direction = 'left'
         self.label = Label(
             text=f'{org_name} - {shop_name} -  {food_type.upper()} - {input_amount}kg',
-            color=(0, 0, 0, 1), font_size=sp(20))
+            color=(0, 0, 0, 1), font_size=sp(20), size_hint_y=None, height=dp(70))
+        self.label.bind()
         self.ids.query_output.add_widget(self.label)
 
     def return_to_calculator(self):
@@ -386,10 +388,8 @@ class TextOutputScreen(Screen):
 
     def extract_data_to_xlsx(self):
         if platform == "android":
-            from android.storage import app_storage_path
-            file_path = app_storage_path()
             org = Organisation(output_org)
-            org.to_xlsx_file(output_org, file_path)
+            org.to_xlsx_file(output_org)
 
     def return_to_menu(self):
         """

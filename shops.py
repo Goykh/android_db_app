@@ -2,8 +2,6 @@ import sqlite3
 
 from xlsxwriter.workbook import Workbook
 
-
-
 class Organisation:
     def __init__(self, name):
         """
@@ -103,16 +101,19 @@ class Organisation:
         self.cur.execute(f"DELETE FROM {org};")
         self.conn.commit()
 
-    def to_xlsx_file(self, org, path):
+    def to_xlsx_file(self, org):
         """
         CURRENTLY NOT USED, BUT WILL BE IN THE FUTURE!
         Puts data from the SQL table into a csv file.
         :param org: org name -> table name
         :return: csv file with the data
         """
+        from android.permissions import request_permissions, Permission
+        request_permissions([Permission.WRITE_EXTERNAL_STORAGE, Permission.READ_EXTERNAL_STORAGE])
+
         if ' ' in org:
             org = org.replace(' ', '_')
-        workbook = Workbook(f'{path}/{org}.xlsx')
+        workbook = Workbook(f'//storage//emulated//0//{org}.xlsx')
         worksheet = workbook.add_worksheet()
         data = self.cur.execute(f'SELECT obchod, typ, SUM(vaha) FROM {org} GROUP BY obchod, typ;')
         for i, row in enumerate(data):
