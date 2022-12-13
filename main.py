@@ -90,10 +90,12 @@ class InsertShopScreen(Screen):
         Method to dynamically generate all the shops as buttons from the SHOP_LIST constant.
         the on_enter() makes it generate when you enter the screen.
         """
+        global org_name
         self.manager.transition.direction = 'left'
         self.ids.box.clear_widgets()
         # reset scrollview to the top
         self.ids.scroll_shop.scroll_y = 1
+        self.ids.shop_label.text = org_name
         for i in SHOP_LIST:
             btn = Button(text=str(i), size_hint_y=None, height=dp(70), on_release=self.get_shop_name, valign='center',
                          halign='center', font_size=sp(14))
