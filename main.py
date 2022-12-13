@@ -62,7 +62,7 @@ class InsertOrgScreen(Screen):
         # reset scrollview to the top
         self.ids.scroll_org.scroll_y = 1
         for i in db.org_list():
-            btn = Button(text=str(i), size_hint_y=None, height=dp(50), on_release=self.get_org_name, valign='center',
+            btn = Button(text=str(i), size_hint_y=None, height=dp(70), on_release=self.get_org_name, valign='center',
                          halign='center', font_size=sp(14))
             self.ids.box.add_widget(btn)
 
@@ -95,7 +95,7 @@ class InsertShopScreen(Screen):
         # reset scrollview to the top
         self.ids.scroll_shop.scroll_y = 1
         for i in SHOP_LIST:
-            btn = Button(text=str(i), size_hint_y=None, height=dp(50), on_release=self.get_shop_name, valign='center',
+            btn = Button(text=str(i), size_hint_y=None, height=dp(70), on_release=self.get_shop_name, valign='center',
                          halign='center', font_size=sp(14))
             self.ids.box.add_widget(btn)
 
@@ -330,7 +330,7 @@ class OrgOutputScreen(Screen):
         self.ids.scroll_out_org.scroll_y = 1
         db = Organisation('DCHP')
         for i in db.org_list():
-            btn = Button(text=str(i), size_hint_y=None, height=dp(50), on_release=self.get_org_name, valign='center',
+            btn = Button(text=str(i), size_hint_y=None, height=dp(70), on_release=self.get_org_name, valign='center',
                          halign='center', font_size=sp(14))
             self.ids.box.add_widget(btn)
 
