@@ -113,7 +113,7 @@ class Organisation:
 
         if ' ' in org:
             org = org.replace(' ', '_')
-        workbook = Workbook(f'//storage//emulated//0//{org}.xlsx')
+        workbook = Workbook(f'/storage/emulated/0/{org}.xlsx')
         worksheet = workbook.add_worksheet()
         data = self.cur.execute(f'SELECT obchod, typ, SUM(vaha) FROM {org} GROUP BY obchod, typ;')
         for i, row in enumerate(data):
