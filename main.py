@@ -132,6 +132,7 @@ class TypeAndAmountScreen(Screen):
         Resets anything that has been set before.
         """
         self.manager.transition.direction = 'left'
+        self.ids.type_amount_label.text = f"{org_name} - {shop_name}"
         global food_type
         food_type = ''
         self.ids.type_a.state = 'normal'
@@ -280,6 +281,7 @@ class SuccessScreen(Screen):
         """
         # declaring the self.label, so I can access it in a function below
         self.manager.transition.direction = 'left'
+        self.ids.scroll_success.scroll_y = 1
         self.label = Label(
             text=f'{org_name} - {shop_name} -  {food_type.upper()} - {input_amount}kg',
             color=(0, 0, 0, 1), font_size=sp(20), size_hint_y=None, height=dp(70))

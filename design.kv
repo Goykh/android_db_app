@@ -145,6 +145,7 @@
                     center_y: self.parent.center_y
             Label:
                 text: "Vyberte Organizaci"
+                id: type_amount_label
                 size_hint: .5, .3
                 color: utils.get_color_from_hex('##050505')
                 pos_hint: {'center_x': 1}
@@ -328,6 +329,7 @@
         ScrollView:
             # The queries from current session are
             # in the GridLayout below
+            id: scroll_success
             canvas.before:
                 Color:
                     rgba: 1, 1, 1, 1
@@ -338,8 +340,6 @@
                 cols: 1
                 spacing: "10dp"
                 id: query_output
-                row_force_default: True
-                row_default_height: "20dp"
                 spacing: "10dp", "10dp"
                 height: self.minimum_height
                 size_hint_y: None
