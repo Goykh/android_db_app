@@ -1,5 +1,3 @@
-import os.path
-
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.metrics import sp, dp
@@ -9,6 +7,7 @@ from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import Screen, ScreenManager
 from kivy.utils import platform
+
 from shops import Organisation
 
 Builder.load_file('design.kv')
@@ -388,10 +387,11 @@ class TextOutputScreen(Screen):
         self.manager.current = "org_output_screen"
         self.manager.transition.direction = "right"
 
-    def extract_data_to_xlsx(self):
+    @staticmethod
+    def extract_data_to_xlsx():
         if platform == "android":
             org = Organisation(output_org)
-            org.to_xlsx_file(output_org)
+            org.to_xlsx_file()
 
     def return_to_menu(self):
         """
