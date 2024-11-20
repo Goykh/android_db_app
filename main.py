@@ -8,6 +8,8 @@ from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import Screen, ScreenManager
 from kivy.utils import platform
 
+from database_protocol import DatabaseProtocol
+from models import Organization, Shop
 from shops import Organisation
 
 Builder.load_file('design.kv')
@@ -41,7 +43,72 @@ class StartupScreen(Screen):
     def to_output_screen(self):
         self.manager.current = "org_output_screen"
 
+    def to_settings_screen(self) -> None:
+        self.manager.current = "settings_screen"
 
+
+class SettingsScreen(Screen):
+    """
+    The settings screen.
+    You can create a new organization and new shop from here.
+    """
+
+    # TODO: Add option to reset all DB values
+    def on_pre_enter(self, *args) -> None:
+        self.manager.transition.direction = "left"
+    def to_add_org_screen(self) -> None:
+        self.manager.current = "add_org_screen"
+
+    def to_add_shop_screen(self) -> None:
+        self.manager.current = "add_shop_screen"
+
+
+class AddOrgScreen(Screen):
+    """
+    Screen to add an organization.
+    """
+    def on_pre_enter(self, *args) -> None:
+        self.manager.transition.direction = "left"
+
+    # TODO: Add option to edit existing orgs/delete them?
+
+    def confirm_org(self) -> None:
+        org_name = self.ids.org_name.text
+        # validate
+        db_conn = DatabaseProtocol()
+        if db_conn.check_record_exists(name=org_name, model=Organization):
+            ...  # TODO: show notification about error
+        # create record
+        db_conn.create_record(Organization, org_name)
+        # return to settings screen
+        self.back_button()
+
+    def back_button(self):
+        self.manager.current = "settings_screen"
+        self.manager.transition.direction = "right"
+
+class AddShopScreen(Screen):
+    """
+    Screen to add a shop.
+    """
+    def on_pre_enter(self, *args) -> None:
+        self.manager.transition.direction = "left"
+
+    # TODO: Add option to edit existing orgs/delete them?
+    def confirm_shop(self) -> None:
+        shop_name = self.ids.shop_name.text
+        # validate
+        db_conn = DatabaseProtocol()
+        if db_conn.check_record_exists(name=shop_name, model=Shop):
+            ...  # TODO: show notification about error
+        # create record
+        db_conn.create_record(Organization, shop_name)
+        # return to settings screen
+        self.back_button()
+
+    def back_button(self):
+        self.manager.current = "settings_screen"
+        self.manager.transition.direction = "right"
 class InsertOrgScreen(Screen):
     """
     Screen where you pick the organisation to add data.
