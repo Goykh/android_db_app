@@ -1,2 +1,4 @@
 .idea
 *.db
+# to avoid commiting test exports
+*.xlsx

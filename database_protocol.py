@@ -1,11 +1,10 @@
 import os
-from typing import Type
 
-from sqlalchemy import create_engine, select, func
+from sqlalchemy import create_engine, func, select
 from sqlalchemy.orm import sessionmaker
 from xlsxwriter import Workbook
 
-from models import Base, Organization, Transaction, Shop
+from models import Base, Organization, Shop, Transaction
 from services.date import get_current_date
 
 
@@ -14,12 +13,11 @@ class DatabaseProtocol:
         current_dir = os.path.dirname(os.path.abspath(__file__))
         db_path = os.path.join(current_dir, "food_bank.db")
 
-        print(db_path)
         self.engine = create_engine(f"sqlite:///{db_path}", echo=False)
         self.SessionLocal = sessionmaker(bind=self.engine)
         Base.metadata.create_all(self.engine)
 
-    def check_record_exists(self, name: str, model: Type[Base], column_name: str = "name") -> bool:
+    def check_record_exists(self, name: str, model: type[Base], column_name: str = "name") -> bool:
         """
         Check if an org already exists
         :param name: org name
@@ -33,7 +31,7 @@ class DatabaseProtocol:
             result = session.execute(stmt).scalar()
             return result is not None
 
-    def create_record(self, model: Type[Base], name: str) -> None:
+    def create_record(self, model: type[Base], name: str) -> None:
         """
         Creates a new database record.
         :param model: model name
@@ -46,7 +44,7 @@ class DatabaseProtocol:
             session.commit()
             session.refresh(new_record)
 
-    def get_all_records(self, model: Type[Base]) -> list[Type[Base]]:
+    def get_all_records(self, model: type[Base]) -> list[type[Base]]:
         """
         Gets all records from a table.
         :param model: table model
@@ -64,18 +62,19 @@ class DatabaseProtocol:
         """
         with self.SessionLocal() as session:
             # TODO: Test this
-            transactions = session.query(
-                Shop.name.label("shop_name"),
-                Transaction.type,
-                func.sum(Transaction.amount).label("total_amount")
-            ).join(
-                Shop, Shop.id == Transaction.shop_id
-            ).filter(
-                Transaction.organization_id == organization_id
-            ).group_by(Transaction.shop_id, Transaction.type).all()
+            transactions = (
+                session.query(
+                    Shop.name.label("shop_name"), Transaction.type, func.sum(Transaction.amount).label("total_amount")
+                )
+                .join(Shop, Shop.id == Transaction.shop_id)
+                .filter(Transaction.organization_id == organization_id)
+                .group_by(Transaction.shop_id, Transaction.type)
+                .all()
+            )
             return transactions
 
     def to_xlsx_file(self):
+        # TODO: Add some logging so we know where to look if something goes wrong
         orgs = self.get_all_records(Organization)
         date = get_current_date()
         workbook = Workbook(f"/storage/emulated/0/documents/{date}.xslx")

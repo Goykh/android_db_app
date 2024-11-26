@@ -3,9 +3,9 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from models import Shop, Organization, Transaction
 from database_protocol import Base
-from services.constants import SHOPS, ORGANIZATIONS
+from models import Organization, Shop
+from services.constants import ORGANIZATIONS, SHOPS
 
 
 class DatabaseSetup:
@@ -30,6 +30,7 @@ class DatabaseSetup:
             session.add_all(shops)
 
             session.commit()
+
 
 if __name__ == "__main__":
     db_setup = DatabaseSetup()

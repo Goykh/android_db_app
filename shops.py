@@ -10,16 +10,18 @@ class Organisation:
         Connects to the db, creates the table if it doesn't exist (it should).
         :param name: name of db table
         """
-        if ' ' in name:
-            name = name.replace(' ', '_')
+        if " " in name:
+            name = name.replace(" ", "_")
         self.conn = sqlite3.connect("pd2.db")
         self.cur = self.conn.cursor()
-        self.cur.execute(f"CREATE TABLE IF NOT EXISTS {name}"
-                         f" (id INTEGER PRIMARY KEY,"
-                         f"obchod TEXT,"
-                         f"typ TEXT,"
-                         f"vaha INT,"
-                         f"datum TEXT);")
+        self.cur.execute(
+            f"CREATE TABLE IF NOT EXISTS {name}"
+            f" (id INTEGER PRIMARY KEY,"
+            f"obchod TEXT,"
+            f"typ TEXT,"
+            f"vaha INT,"
+            f"datum TEXT);"
+        )
         self.conn.commit()
 
     def insert(self, org, shop, food_type, amount):
@@ -32,12 +34,13 @@ class Organisation:
         :param food_type: type of the food (A, B, C, M)
         :param amount: amount of food
         """
-        if ' ' in org:
-            org = org.replace(' ', '_')
+        if " " in org:
+            org = org.replace(" ", "_")
 
         self.cur.execute(
             f'INSERT INTO {org}(obchod, typ, vaha, datum) VALUES(?, ?, ?, datetime("now", "localtime"));',
-            (shop, food_type.upper(), amount))
+            (shop, food_type.upper(), amount),
+        )
         self.conn.commit()
 
     def get_type_amount(self, org):
@@ -46,8 +49,8 @@ class Organisation:
         :param org: org name -> table name
         :return: the amount grouped by shop name and type
         """
-        if ' ' in org:
-            org = org.replace(' ', '_')
+        if " " in org:
+            org = org.replace(" ", "_")
         self.cur.execute(f"SELECT obchod, typ, SUM(vaha), datum FROM {org} GROUP BY obchod, typ;")
         amount = self.cur.fetchall()
         self.conn.commit()
@@ -58,8 +61,8 @@ class Organisation:
         Gets all entries in a table.
         :param org: org name -> table name
         """
-        if ' ' in org:
-            org = org.replace(' ', '_')
+        if " " in org:
+            org = org.replace(" ", "_")
         self.cur.execute(f"SELECT * FROM {org};")
         data = self.cur.fetchall()
         self.conn.commit()
@@ -83,8 +86,8 @@ class Organisation:
         names_raw.remove("sqlite_sequence")
         names = []
         for name in names_raw:
-            if '_' in name:
-                new_name = name.replace('_', ' ')
+            if "_" in name:
+                new_name = name.replace("_", " ")
                 names.append(new_name)
             else:
                 names.append(name)
@@ -98,8 +101,8 @@ class Organisation:
         to delete from and until certain date.
         :param org: org name -> table name
         """
-        if ' ' in org:
-            org = org.replace(' ', '_')
+        if " " in org:
+            org = org.replace(" ", "_")
         self.cur.execute(f"DELETE FROM {org};")
         self.conn.commit()
 
@@ -110,7 +113,8 @@ class Organisation:
         :return: xlsx file with the data
         """
         # Importing android permissions to be able to access "external" storage
-        from android.permissions import request_permissions, Permission
+        from android.permissions import Permission, request_permissions
+
         request_permissions([Permission.WRITE_EXTERNAL_STORAGE, Permission.READ_EXTERNAL_STORAGE])
         # getting the list of raw table names ( def org_list() gets a modified, better looking)
         org_list = list(self.cur.execute("SELECT name FROM sqlite_master WHERE type='table';"))
@@ -120,7 +124,7 @@ class Organisation:
         # getting the date with the czech month names
         date = self._get_current_date()
         # creating file in the documents folder
-        workbook = Workbook(f'/storage/emulated/0/documents/{date}.xlsx')
+        workbook = Workbook(f"/storage/emulated/0/documents/{date}.xlsx")
         for org in org_list:
             self.cur.execute(f"SELECT obchod, typ, SUM(vaha) FROM {org} GROUP BY obchod, typ;")
             data = self.cur.fetchall()

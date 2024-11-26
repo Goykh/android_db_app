@@ -1,0 +1,39 @@
+[project]
+name = "Food Bank App"
+description = "An android app to manage donations in a Food Bank"
+version = "1.4.0"
+authors = [
+    { name = "Geronymo Fuhrmann", email = "geronymo.fuhrmann@gmail.com"}
+]
+license = "MIT"
+
+dependencies = [
+    # TODO finish this after pip freeze
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff",
+    "pre-commit",
+]
+
+[tool.ruff]
+line-length = 120
+exclude = ["shops.py", ".idea"]
+
+[tool.ruff.lint]
+extend-select = ["E501"]
+select = [
+    "C",  # mccabe rules
+    "F",  # pyflakes rules
+    "E",  # pycodestyle error rules
+    "W",  # pycodestyle warning rules
+    "B",  # flake8-bugbear rules
+    "I",  # isort rules
+]
+ignore = ["F401"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
