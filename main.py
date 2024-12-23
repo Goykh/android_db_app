@@ -14,29 +14,6 @@ from shops import Organisation
 
 Builder.load_file("design.kv")
 
-# List of shops to generate buttons
-SHOP_LIST = [
-    "ALBERT",
-    "BILLA",
-    "D-VÝROBCI",
-    "KAUFLAND",
-    "MAKRO",
-    "PENNY",
-    "TESCO",
-    "DD",
-    "SP",
-    "PBC",
-    "SP MODLETICE",
-    "NORMA",
-    "JIP",
-    "DM",
-    "ROSSMANN",
-    "LIDL",
-    "COOP",
-    "PB OSTATNÍ",
-    "JINÉ",
-]
-
 # Global variables
 # have to be used to used data from one screen
 # on a different screen
@@ -396,7 +373,7 @@ class TypeAndAmountScreen(Screen):
 
 class SuccessScreen(Screen):
     """
-    You get a list of transactions made in the session.
+    You get a list of donations made in the session.
     Generates 3 buttons to edit, add again or go back menu.
     """
 

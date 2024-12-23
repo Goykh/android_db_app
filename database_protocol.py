@@ -4,7 +4,7 @@ from sqlalchemy import create_engine, func, select
 from sqlalchemy.orm import sessionmaker
 from xlsxwriter import Workbook
 
-from models import Base, Organization, Shop, Transaction
+from models import Base, Donation, Organization, Shop
 from services.date import get_current_date
 
 
@@ -54,24 +54,24 @@ class DatabaseProtocol:
             records = session.query(model).all()
             return records
 
-    def get_organization_transactions(self, organization_id: int) -> list[tuple[str, str, float]]:
+    def get_organization_donations(self, organization_id: int) -> list[tuple[str, str, float]]:
         """
-        Gets the transactions of the given organization ID.
+        Gets the donations of the given organization ID.
         :param organization_id: id of organization
         :return: a list of tuples with the shop name, type and amount
         """
         with self.SessionLocal() as session:
             # TODO: Test this
-            transactions = (
+            donations = (
                 session.query(
-                    Shop.name.label("shop_name"), Transaction.type, func.sum(Transaction.amount).label("total_amount")
+                    Shop.name.label("shop_name"), Donation.type, func.sum(Donation.amount).label("total_amount")
                 )
-                .join(Shop, Shop.id == Transaction.shop_id)
-                .filter(Transaction.organization_id == organization_id)
-                .group_by(Transaction.shop_id, Transaction.type)
+                .join(Shop, Shop.id == Donation.shop_id)
+                .filter(Donation.organization_id == organization_id)
+                .group_by(Donation.shop_id, Donation.type)
                 .all()
             )
-            return transactions
+            return donations
 
     def to_xlsx_file(self):
         # TODO: Add some logging so we know where to look if something goes wrong
@@ -80,12 +80,12 @@ class DatabaseProtocol:
         workbook = Workbook(f"/storage/emulated/0/documents/{date}.xslx")
         # TODO: add the android specific stuff
         for org in orgs:
-            transactions = self.get_organization_transactions(org.id)
-            if not transactions:
+            donations = self.get_organization_donations(org.id)
+            if not donations:
                 # there is nothing so skip
                 continue
             worksheet = workbook.add_worksheet(org.name)
-            for i, transaction in enumerate(transactions):
-                worksheet.write(i, 0, transaction[0])
-                worksheet.write(i, 1, transaction[1])
-                worksheet.write(i, 2, transaction[2])
+            for i, donation in enumerate(donations):
+                worksheet.write(i, 0, donation[0])
+                worksheet.write(i, 1, donation[1])
+                worksheet.write(i, 2, donation[2])
