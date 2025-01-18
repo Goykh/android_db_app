@@ -419,17 +419,54 @@
             size: self.size
     on_pre_enter: root.on_pre_enter()
     GridLayout:
-        cols: 1
-        padding: '15dp', '15dp'
-        spacing: '20dp', '20dp'
-        Button:
-            text: "Přidat Organizaci"
-            font_size: '20sp'
-            on_press: root.to_add_org_screen()
-        Button:
-            text: "Přidat obchod"
-            font_size: '20sp'
-            on_press: root.to_add_shop_screen()
+        cols:1
+        spacing: "20dp", "20dp"
+        BoxLayout:
+            orientation: 'horizontal'
+            padding: '15dp', '15dp'
+            size_hint: 1, .15
+            Button:
+                id: img_btn
+                text: 'Zpět'
+                size_hint: .03, .67
+                background_color: 0, 0, 0, 0
+                on_press: root.back_button()
+                # Image for the button arrow back
+                Image:
+                    source: 'pictures/back_arrow.png'
+                    center_x: self.parent.center_x
+                    center_y: self.parent.center_y
+            Label:
+                text: "Nastavení"
+                size_hint: .5, .3
+                color: utils.get_color_from_hex('##050505')
+                pos_hint: {'center_x': 1}
+            Label:
+                size_hint: .03, .67
+        GridLayout:
+            cols: 1
+            padding: '15dp', '15dp'
+            spacing: '20dp', '20dp'
+            Button:
+                text: "Přidat Organizaci"
+                font_size: '20sp'
+                size_hint: .3, .5
+                on_press: root.to_add_org_screen()
+            Button:
+                text: "Přidat obchod"
+                font_size: '20sp'
+                size_hint: .3, .5
+                on_press: root.to_add_shop_screen()
+            Button:
+                text: "Smazat organizaci"
+                font_size: '20sp'
+                size_hint: .3, .5
+                on_press: root.to_delete_org_screen()
+            Button:
+                text: "Smazat obchod"
+                font_size: '20sp'
+                size_hint: .3, .5
+                on_press: root.to_delete_shop_screen()
 
 <AddOrgScreen>
     # add an organization
@@ -442,7 +479,6 @@
     on_pre_enter: root.on_pre_enter()
     GridLayout:
         cols:1
-        id: grid
         spacing: "20dp", "20dp"
         BoxLayout:
             orientation: 'horizontal'
@@ -466,22 +502,26 @@
                 pos_hint: {'center_x': 1}
             Label:
                 size_hint: .03, .67
-        TextInput:
-            hint_text: "Název Organizace"
-            id: org_name
-            halign: "left"
-            font_size: '16sp'
-            size_hint:(1, .15)
-            padding: "15dp", "12dp"
-            readonly: False
-            multiline: False
-            size_hint: 1, .15
-        Button:
-            text: "Potvrdit"
-            font_size: '16sp'
-            size_hint: 1, .15
-            id: confirm_org_button
-            on_press: root.confirm_org()
+        GridLayout:
+            cols: 1
+            padding: '15dp', '15dp'
+            spacing: '20dp', '20dp'
+            TextInput:
+                hint_text: "Název Organizace"
+                id: org_name
+                halign: "left"
+                font_size: '16sp'
+                size_hint:(1, .15)
+                padding: "15dp", "12dp"
+                readonly: False
+                multiline: False
+                size_hint: 1, .15
+            Button:
+                text: "Potvrdit"
+                font_size: '16sp'
+                size_hint: 1, .15
+                id: confirm_org_button
+                on_press: root.confirm_org()
 
 <AddShopScreen>
     # add an organization
@@ -492,32 +532,142 @@
             pos: self.pos
             size: self.size
     on_pre_enter: root.on_pre_enter()
-    BoxLayout:
-        orientation: "vertical"
+    GridLayout:
+        cols:1
+        spacing: "20dp", "20dp"
+        BoxLayout:
+            orientation: 'horizontal'
+            padding: '15dp', '15dp'
+            size_hint: 1, .15
+            Button:
+                id: img_btn
+                text: 'Zpět'
+                size_hint: .03, .67
+                background_color: 0, 0, 0, 0
+                on_press: root.back_button()
+                # Image for the button arrow back
+                Image:
+                    source: 'pictures/back_arrow.png'
+                    center_x: self.parent.center_x
+                    center_y: self.parent.center_y
+            Label:
+                text: "Vytvořit Obchod"
+                size_hint: .5, .3
+                color: utils.get_color_from_hex('##050505')
+                pos_hint: {'center_x': 1}
+            Label:
+                size_hint: .03, .67
         GridLayout:
             cols: 1
             padding: '15dp', '15dp'
             spacing: '20dp', '20dp'
-            BoxLayout:
-                # The calculator part
-                orientation: "vertical"
-                size: root.width, root.height
-                TextInput:
-                    hint_text: "Název Obchodu"
-                    id: shop_name
-                    halign: "left"
-                    font_size: '16sp'
-                    size_hint:(1, .15)
-                    padding: "15dp", "12dp"
-                    readonly: False
-                    multiline: False
-                    size_hint: 1, .15
+            TextInput:
+                hint_text: "Název Obchodu"
+                id: shop_name
+                halign: "left"
+                font_size: '16sp'
+                size_hint:(1, .15)
+                padding: "15dp", "12dp"
+                readonly: False
+                multiline: False
+                size_hint: 1, .15
             Button:
                 text: "Potvrdit"
                 font_size: '16sp'
                 size_hint: 1, .15
                 id: confirm_shop_button
                 on_press: root.confirm_shop()
+
+<DeleteOrgScreen>
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    on_pre_enter: root.on_pre_enter()
+    GridLayout:
+        cols:1
+        id: grid_delete_org
+        spacing: "20dp", "20dp"
+        BoxLayout:
+            orientation: 'horizontal'
+            padding: '15dp', '15dp'
+            size_hint: 1, .15
+            Button:
+                id: img_btn
+                text: 'Zpět'
+                size_hint: .03, .67
+                background_color: 0, 0, 0, 0
+                on_press: root.back_button()
+                # Image for the button arrow back
+                Image:
+                    source: 'pictures/back_arrow.png'
+                    center_x: self.parent.center_x
+                    center_y: self.parent.center_y
+            Label:
+                text: "Smazat Organizaci"
+                size_hint: .5, .3
+                color: utils.get_color_from_hex('##050505')
+                pos_hint: {'center_x': 1}
+            Label:
+                size_hint: .03, .67
+        ScrollView:
+            # The scrollview with the dynamic buttons
+            # the buttons are generated inside the GridLayout
+            id: scroll_org_delete
+            GridLayout:
+                cols: 2
+                spacing: "10dp"
+                id: box_delete_org
+                size_hint_y: None
+                height: self.minimum_height
+
+<DeleteShopScreen>
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    on_pre_enter: root.on_pre_enter()
+    GridLayout:
+        cols:1
+        id: grid_delete_shop
+        spacing: "20dp", "20dp"
+        BoxLayout:
+            orientation: 'horizontal'
+            padding: '15dp', '15dp'
+            size_hint: 1, .15
+            Button:
+                id: img_btn
+                text: 'Zpět'
+                size_hint: .03, .67
+                background_color: 0, 0, 0, 0
+                on_press: root.back_button()
+
+                # Image for the button arrow back
+                Image:
+                    source: 'pictures/back_arrow.png'
+                    center_x: self.parent.center_x
+                    center_y: self.parent.center_y
+            Label:
+                text: "Smazat Obchod"
+                size_hint: .5, .3
+                color: utils.get_color_from_hex('##050505')
+                pos_hint: {'center_x': 1}
+            Label:
+                size_hint: .03, .67
+        ScrollView:
+            # The scrollview with the dynamic buttons
+            # the buttons are generated inside the GridLayout
+            id: scroll_org_delete
+            GridLayout:
+                cols: 2
+                spacing: "10dp"
+                id: box_delete_shop
+                size_hint_y: None
+                height: self.minimum_height
 
 <TextOutputScreen>
     # The output of picked organisation
@@ -539,7 +689,6 @@
                     pos: self.pos
                     size: self.size
             Label:
-
                 text: 'OBCHOD'
                 color: 0, 0, 0, 1
                 padding: "10dp", "10dp"
@@ -692,3 +841,7 @@
         name: "add_org_screen"
     AddShopScreen:
         name: "add_shop_screen"
+    DeleteOrgScreen:
+        name: "delete_org_screen"
+    DeleteShopScreen:
+        name: "delete_shop_screen"

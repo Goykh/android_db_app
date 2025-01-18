@@ -1,4 +1,18 @@
 from datetime import datetime
+from zoneinfo import ZoneInfo
+
+
+def convert_tz_and_format(time: datetime, tz: str = "Europe/Prague", format: str = "%d-%m-%Y") -> str:
+    """
+    Converts the time to the given timezone and format.
+    Default values to be used in this app.
+    :param time: time to convert
+    :param tz: timezone to convert to
+    :param format: format to convert to
+    :return: str with converted time
+    """
+    tz = ZoneInfo(tz)
+    return time.astimezone(tz).strftime(format)
 
 
 def get_current_date() -> str:

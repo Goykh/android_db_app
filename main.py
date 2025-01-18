@@ -1,6 +1,8 @@
+from kivy import Logger
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.metrics import dp, sp
+from kivy.properties import partial
 from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
@@ -10,7 +12,9 @@ from kivy.utils import platform
 
 from database_protocol import DatabaseProtocol
 from models import Organization, Shop
-from shops import Organisation
+from services.date import convert_tz_and_format
+
+# from shops import Organisation
 
 Builder.load_file("design.kv")
 
@@ -21,7 +25,7 @@ Builder.load_file("design.kv")
 # Input variables:
 org_name = ""
 shop_name = ""
-food_type = ""
+donation_type = ""
 input_amount = ""
 # Output variable:
 output_org = ""
@@ -58,6 +62,16 @@ class SettingsScreen(Screen):
 
     def to_add_shop_screen(self) -> None:
         self.manager.current = "add_shop_screen"
+
+    def to_delete_org_screen(self) -> None:
+        self.manager.current = "delete_org_screen"
+
+    def to_delete_org_shop(self) -> None:
+        self.manager.current = "delete_shop_screen"
+
+    def back_button(self) -> None:
+        self.manager.current = "startup_screen"
+        self.manager.transition.direction = "right"
 
 
 class AddOrgScreen(Screen):
@@ -101,7 +115,6 @@ class AddShopScreen(Screen):
     def on_pre_enter(self, *args) -> None:
         self.manager.transition.direction = "left"
 
-    # TODO: Add option to edit existing orgs/delete them?
     def confirm_shop(self) -> None:
         shop_name = self.ids.shop_name.text
         # validate
@@ -119,6 +132,188 @@ class AddShopScreen(Screen):
         db_conn.create_record(Organization, shop_name)
         # return to settings screen
         self.back_button()
+
+    def back_button(self):
+        self.manager.current = "settings_screen"
+        self.manager.transition.direction = "right"
+
+
+class DeleteOrgScreen(Screen):
+    def on_pre_enter(self, *args):
+        self.manager.transition.direction = "left"
+        # clearing the widgets
+        self.ids.box_delete_org.clear_widgets()
+        # reset scrollview to the top
+        self.ids.scroll_org_delete.scroll_y = 1
+        db_conn = DatabaseProtocol()
+        for org in db_conn.get_all_records(Organization):
+            btn = Button(
+                text=str(org.name),
+                size_hint_y=None,
+                height=dp(70),
+                on_release=self.delete_org,
+                valign="center",
+                halign="center",
+                font_size=sp(14),
+            )
+            self.ids.box_delete_org.add_widget(btn)
+
+    def delete_org(self, obj: Button):
+        """
+        Attempts to find the org record in the DB.
+        Opens a different popup depending on the result.
+        :param obj: text on the button you pressed
+        """
+        org_name = obj.text
+        db_conn = DatabaseProtocol()
+        org = db_conn.get_record_by_name(Organization, org_name)
+        error_popup = Popup(
+            title="Nastala chyba!",
+            auto_dismiss=True,
+            size_hint=(0.6, 0.3),
+            pos_hint={"x": 0.2, "top": 0.7},
+            content=Label(text="Něco se pokazilo..."),
+        )
+        if not org:
+            error_popup.content = Label(text="Zadaná organizace neexistuje.")
+            error_popup.open()
+            return
+        if len(org) != 1:
+            error_popup.content = Label(text="Bylo nalezeno více než jedna organizace se stejným jménem.")
+            error_popup.open()
+            return
+        confirm_btn = Button(text="Ano!")
+        deny_btn = Button(text="Ne!")
+        grid = GridLayout(cols=2, size_hint=(1, 0.5))
+        grid.add_widget(confirm_btn)
+        grid.add_widget(deny_btn)
+
+        popup = Popup(
+            title=f"Opravdu chcete smazat {org_name}?",
+            auto_dismiss=True,
+            size_hint=(0.6, 0.3),
+            pos_hint={"x": 0.2, "top": 0.7},
+            content=grid,
+        )
+        confirm_btn.bind(on_press=partial(self.delete_org_confirm, popup, org[0]))
+        deny_btn.bind(on_press=popup.dismiss)
+
+        popup.open()
+
+    def delete_org_confirm(self, popup: Popup, org: Organization, *args) -> None:
+        """
+        Processes the deletion of the organization in the DB.
+        If unsuccessful, opens a popup.
+        Refreshes the screen to reload the buttons
+        :param popup: the confirmation popup of the deletion
+        :param org: the given org to delete
+        :return: None
+        """
+        db_conn = DatabaseProtocol()
+        res = db_conn.delete_record(Organization, org.id)
+        popup.dismiss()
+
+        if not res:
+            error_popup = Popup(
+                title="Nastala chyba!",
+                auto_dismiss=True,
+                size_hint=(0.6, 0.3),
+                pos_hint={"x": 0.2, "top": 0.7},
+                content=Label(text="Nepovedlo se smazat organizaci..."),
+            )
+            error_popup.open()
+        self.on_pre_enter()
+
+    def back_button(self):
+        self.manager.current = "settings_screen"
+        self.manager.transition.direction = "right"
+
+
+class DeleteShopScreen(Screen):
+    def on_pre_enter(self, *args):
+        self.manager.transition.direction = "left"
+        # clearing the widgets
+        self.ids.box_delete_shop.clear_widgets()
+        # reset scrollview to the top
+        self.ids.scroll_shop_delete.scroll_y = 1
+        db_conn = DatabaseProtocol()
+        for shop in db_conn.get_all_records(Shop):
+            btn = Button(
+                text=str(shop.name),
+                size_hint_y=None,
+                height=dp(70),
+                on_release=self.delete_shop,
+                valign="center",
+                halign="center",
+                font_size=sp(14),
+            )
+            self.ids.box_delete_shop.add_widget(btn)
+
+    def delete_shop(self, obj: Button):
+        """
+        Attempts to find the shop record in the DB.
+        Opens a different popup depending on the result.
+        :param obj: text on the button you pressed
+        """
+        shop_name = obj.text
+        db_conn = DatabaseProtocol()
+        shop = db_conn.get_record_by_name(Shop, shop_name)
+        error_popup = Popup(
+            title="Nastala chyba!",
+            auto_dismiss=True,
+            size_hint=(0.6, 0.3),
+            pos_hint={"x": 0.2, "top": 0.7},
+            content=Label(text="Něco se pokazilo..."),
+        )
+        if not shop:
+            error_popup.content = Label(text="Zadaný obchod neexistuje.")
+            error_popup.open()
+            return
+        if len(shop) != 1:
+            error_popup.content = Label(text="Bylo nalezeno více než jeden obchod se stejným jménem.")
+            error_popup.open()
+            return
+        confirm_btn = Button(text="Ano!")
+        deny_btn = Button(text="Ne!")
+        grid = GridLayout(cols=2, size_hint=(1, 0.5))
+        grid.add_widget(confirm_btn)
+        grid.add_widget(deny_btn)
+
+        popup = Popup(
+            title=f"Opravdu chcete smazat {shop_name}?",
+            auto_dismiss=True,
+            size_hint=(0.6, 0.3),
+            pos_hint={"x": 0.2, "top": 0.7},
+            content=grid,
+        )
+        confirm_btn.bind(on_press=partial(self.delete_shop_confirm, popup, shop[0]))
+        deny_btn.bind(on_press=popup.dismiss)
+
+        popup.open()
+
+    def delete_shop_confirm(self, popup: Popup, shop: Shop, *args) -> None:
+        """
+        Processes the deletion of the shop in the DB.
+        If unsuccessful, opens a popup.
+        Refreshes the screen to reload the buttons
+        :param popup: the confirmation popup of the deletion
+        :param shop: the given shop to delete
+        :return: None
+        """
+        db_conn = DatabaseProtocol()
+        res = db_conn.delete_record(Shop, shop.id)
+        popup.dismiss()
+
+        if not res:
+            error_popup = Popup(
+                title="Nastala chyba!",
+                auto_dismiss=True,
+                size_hint=(0.6, 0.3),
+                pos_hint={"x": 0.2, "top": 0.7},
+                content=Label(text="Nepovedlo se smazat obchod..."),
+            )
+            error_popup.open()
+        self.on_pre_enter()
 
     def back_button(self):
         self.manager.current = "settings_screen"
@@ -145,7 +340,7 @@ class InsertOrgScreen(Screen):
         db_conn = DatabaseProtocol()
         for org in db_conn.get_all_records(Organization):
             btn = Button(
-                text=str(org),
+                text=str(org.name),
                 size_hint_y=None,
                 height=dp(70),
                 on_release=self.get_org_name,
@@ -229,8 +424,8 @@ class TypeAndAmountScreen(Screen):
         """
         self.manager.transition.direction = "left"
         self.ids.type_amount_label.text = f"{org_name} - {shop_name}"
-        global food_type
-        food_type = ""
+        global donation_type
+        donation_type = ""
         self.ids.type_a.state = "normal"
         self.ids.type_b.state = "normal"
         self.ids.type_c.state = "normal"
@@ -242,8 +437,8 @@ class TypeAndAmountScreen(Screen):
         Method to get the type of food as a global variable.
         :param input_type: text on the button you pressed
         """
-        global food_type
-        food_type = input_type
+        global donation_type
+        donation_type = input_type
 
     # Calculator functions!!!
     def delete_last_number(self):
@@ -354,7 +549,7 @@ class TypeAndAmountScreen(Screen):
                 popup.open()
 
         # checks if food type has been selected, if not. Creates popup
-        if food_type in ["a", "b", "c", "m"]:
+        if donation_type in ["a", "b", "c", "m"]:
             self.manager.current = "success_screen"
         else:
             popup = Popup(
@@ -377,6 +572,42 @@ class SuccessScreen(Screen):
     Generates 3 buttons to edit, add again or go back menu.
     """
 
+    @classmethod
+    def _process_donation(self) -> None:
+        """
+        Processes the donation in the db.
+        Finds all the necessary records.
+        Opens popups if errors happen.
+        :return: None
+        """
+        db_conn = DatabaseProtocol()
+        org = db_conn.get_record_by_name(Organization, org_name)
+        shop = db_conn.get_record_by_name(Shop, shop_name)
+        try:
+            float(input_amount)
+        except ValueError:
+            Logger.exception("PB_APP: Invalid input amount...")
+            popup = Popup(
+                title="Nastala chyba!",
+                auto_dismiss=True,
+                size_hint=(0.6, 0.3),
+                pos_hint={"x": 0.2, "top": 0.7},
+                content=Label(text="Neplatná hodnota množství!"),
+            )
+            popup.open()
+            return
+
+        res = db_conn.make_donation(org, shop, donation_type, input_amount)
+        if not res:
+            popup = Popup(
+                title="Nastala chyba!",
+                auto_dismiss=True,
+                size_hint=(0.6, 0.3),
+                pos_hint={"x": 0.2, "top": 0.7},
+                content=Label(text="Nepovedlo se provést operaci..."),
+            )
+            popup.open()
+
     def on_pre_enter(self, *args):
         """
         On enter generates a label with the data you just added.
@@ -386,7 +617,7 @@ class SuccessScreen(Screen):
         self.manager.transition.direction = "left"
         self.ids.scroll_success.scroll_y = 1
         self.label = Label(
-            text=f"{org_name} - {shop_name} -  {food_type.upper()} - {input_amount}kg",
+            text=f"{org_name} - {shop_name} -  {donation_type.upper()} - {input_amount}kg",
             color=(0, 0, 0, 1),
             font_size=sp(20),
             size_hint_y=None,
@@ -408,20 +639,16 @@ class SuccessScreen(Screen):
         """
         Returns to the screen where you pick a shop from the list
         so, you can add more data to one organisation.
-        Also makes the SQL query to add all the data to the database.
         """
-        organisation = Organisation(org_name)
-        organisation.insert(org_name, shop_name, food_type, input_amount)
+        self._process_donation()
         self.manager.current = "insert_shop_screen"
         self.manager.transition.direction = "right"
 
     def return_to_menu(self):
         """
         Returns to the startup_screen.
-        Also makes the SQL query to add all the data to the database.
         """
-        organisation = Organisation(org_name)
-        organisation.insert(org_name, shop_name, food_type, input_amount)
+        self._process_donation()
         self.manager.current = "startup_screen"
         self.manager.transition.direction = "right"
 
@@ -441,10 +668,10 @@ class OrgOutputScreen(Screen):
         self.ids.box.clear_widgets()
         # reset scrollview to the top
         self.ids.scroll_out_org.scroll_y = 1
-        db = Organisation("DCHP")
-        for i in db.org_list():
+        db_conn = DatabaseProtocol()
+        for org in db_conn.get_all_records(Organization):
             btn = Button(
-                text=str(i),
+                text=str(org.name),
                 size_hint_y=None,
                 height=dp(70),
                 on_release=self.get_org_name,
@@ -475,18 +702,18 @@ class TextOutputScreen(Screen):
 
     def on_pre_enter(self):
         """
-        On entering generates labels with the data from the .get_type_amount() method
-        from shops.py
+        Builds a list of all donations for the selected organization.
         """
         # clears widgets on screen
         self.manager.transition.direction = "left"
         self.ids.output_grid.clear_widgets()
-        org = Organisation(output_org)
-        amount = org.get_type_amount(output_org)
-        for i in amount:
-            lb1 = Label(text=str(i[0]), color=(0, 0, 0, 1), markup=True, font_size=sp(15))
-            lb2 = Label(text=str(i[1]), color=(0, 0, 0, 1), markup=True, font_size=sp(15))
-            lb3 = Label(text=f"{str(i[2])}", color=(0, 0, 0, 1), markup=True, font_size=sp(15))
+        db_conn = DatabaseProtocol()
+        org = db_conn.get_record_by_name(Organization, output_org)
+        donations = db_conn.get_organization_donations(org.id)
+        for donation in donations:
+            lb1 = Label(text=str(donation[0]), color=(0, 0, 0, 1), markup=True, font_size=sp(15))
+            lb2 = Label(text=str(donation[1]), color=(0, 0, 0, 1), markup=True, font_size=sp(15))
+            lb3 = Label(text=f"{str(donation[2])}", color=(0, 0, 0, 1), markup=True, font_size=sp(15))
             self.ids.output_grid.add_widget(lb1)
             self.ids.output_grid.add_widget(lb2)
             self.ids.output_grid.add_widget(lb3)
@@ -505,8 +732,8 @@ class TextOutputScreen(Screen):
     @staticmethod
     def extract_data_to_xlsx():
         if platform == "android":
-            org = Organisation(output_org)
-            org.to_xlsx_file()
+            db_conn = DatabaseProtocol()
+            db_conn.to_xlsx_file()
 
     def return_to_menu(self):
         """
@@ -528,18 +755,20 @@ class DetailedOutputScreen(Screen):
     """
 
     def on_pre_enter(self):
-        """ """
+        """
+        Gets all the detailed donations of the selected org.
+        """
         # clears widgets on screen
         self.manager.transition.direction = "left"
         self.ids.detailed_grid.clear_widgets()
-        org = Organisation(output_org)
-        data = org.get_all_table_data(output_org)
-        for i in data:
-            reversed_date = i[4][:10]  # YYYY-MM-DD format
-            date = f"{reversed_date[8:]}-{reversed_date[5:7]}-{reversed_date[:4]}"  # DD-MM-YYYY format
-            lb1 = Label(text=str(i[1]), color=(0, 0, 0, 1), markup=True, font_size=sp(15))
-            lb2 = Label(text=str(i[2]), color=(0, 0, 0, 1), markup=True, font_size=sp(15))
-            lb3 = Label(text=str(f"{i[3]}kg"), color=(0, 0, 0, 1), markup=True, font_size=sp(15))
+        db_conn = DatabaseProtocol()
+        org = db_conn.get_record_by_name(Organization, output_org)
+        donations = db_conn.get_detailed_organization_donations(org.id)
+        for donation in donations:
+            date = convert_tz_and_format(donation.create_date)
+            lb1 = Label(text=str(donation.shop_id.name), color=(0, 0, 0, 1), markup=True, font_size=sp(15))
+            lb2 = Label(text=str(donation.type), color=(0, 0, 0, 1), markup=True, font_size=sp(15))
+            lb3 = Label(text=str(f"{donation.type.amount}kg"), color=(0, 0, 0, 1), markup=True, font_size=sp(15))
             lb4 = Label(text=str(date), color=(0, 0, 0, 1), markup=True, font_size=sp(15))
             self.ids.detailed_grid.add_widget(lb1)
             self.ids.detailed_grid.add_widget(lb2)
@@ -560,6 +789,7 @@ class DetailedOutputScreen(Screen):
         self.manager.current = "startup_screen"
         self.manager.transition.direction = "right"
 
+    # TODO: Rework the whole deletion part!!!
     def delete_data(self):
         grid = GridLayout(cols=2, size_hint=(1, 0.5))
 
@@ -583,8 +813,9 @@ class DetailedOutputScreen(Screen):
         popup.open()
 
     def delete_confirm(self, button):
-        org = Organisation(output_org)
-        org.delete_data_in_table(output_org)
+        # TODO: Rework the whole deletion
+        #  org = Organisation(output_org)
+        #  org.delete_data_in_table(output_org)
         self.manager.current = "org_output_screen"
         self.manager.transition.direction = "right"
 

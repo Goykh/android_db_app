@@ -3,8 +3,7 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from database_protocol import Base
-from models import Organization, Shop
+from models import Base, Organization, Shop
 from services.constants import ORGANIZATIONS, SHOPS
 
 
