@@ -1,4 +1,7 @@
 .idea
+.ruff_cache
 *.db
+__pycache__/
+*.pyc
 # to avoid commiting test exports
 *.xlsx
